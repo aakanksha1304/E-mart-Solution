@@ -16,11 +16,20 @@ public class GlobalExceptionHandler {
                 .body(ex.getMessage());
     }
 
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<String> handleIllegal(IllegalArgumentException ex) {
+        return ResponseEntity
+                .badRequest()
+                .body(ex.getMessage());
+    }
+
+
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<String> handleDBConstraint(DataIntegrityViolationException ex) {
         return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body("Duplicate value violates unique constraint");
+                .badRequest()
+                .body("Operation failed due to database constraint violation");
     }
 
     public static class DuplicateFieldException extends RuntimeException {
