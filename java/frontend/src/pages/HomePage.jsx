@@ -1,4 +1,6 @@
 import React from 'react';
+import AdBanner from '../components/AdBanner';
+import styles from '../styles/HomePage.module.css';
 import Header from '../components/Header';
 import styles from '../styles//HomePage.module.css';
 
@@ -20,7 +22,7 @@ const HomePage = () => {
 
     return (
         <div>
-            <Header />
+            <AdBanner />
 
             <div className={styles.homeContainer}>
                 {/* Categories Section */}
