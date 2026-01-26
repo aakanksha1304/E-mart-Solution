@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styles from '../styles/Navbar.module.css';
 
-const Navbar = () => {
+const Navbar = ({ onCartClick, onLogoClick }) => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false); // Mock login state
 
@@ -11,7 +11,7 @@ const Navbar = () => {
 
     return (
         <nav className={styles.navbar}>
-            <div className={styles.logo}>
+            <div className={styles.logo} onClick={onLogoClick} style={{ cursor: 'pointer' }}>
                 e<span className={styles.highlight}>Mart</span>
             </div>
 
@@ -36,7 +36,7 @@ const Navbar = () => {
             </div>
 
             <div className={`${styles.navLinks} ${isMobileMenuOpen ? styles.active : ''}`}>
-                <a href="#" className={styles.navItem}>
+                <a href="#" className={styles.navItem} onClick={(e) => { e.preventDefault(); onCartClick(); }}>
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <circle cx="9" cy="21" r="1"></circle>
                         <circle cx="20" cy="21" r="1"></circle>

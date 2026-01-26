@@ -1,8 +1,6 @@
 import React from 'react';
-import Navbar from '../components/Navbar';
 import CategoryBar from '../components/CategoryBar';
 import AdBanner from '../components/AdBanner';
-import Footer from '../components/Footer';
 import styles from '../styles/HomePage.module.css';
 
 const HomePage = () => {
@@ -27,7 +25,7 @@ const HomePage = () => {
 
     return (
         <div className={styles.pageWrapper}>
-            <Navbar />
+            {/* Navbar is in App.jsx */}
             <CategoryBar />
 
             <div className={styles.mainContent}>
@@ -72,7 +70,7 @@ const HomePage = () => {
                 </section>
             </div>
 
-            <Footer />
+            {/* Footer is in App.jsx */}
         </div>
     );
 };
