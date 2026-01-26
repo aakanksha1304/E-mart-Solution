@@ -1,6 +1,7 @@
 package com.example.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
@@ -23,14 +24,15 @@ public class User {
     @Column(name = "full_name", nullable = false, length = 100)
     private String fullName;
 
-    @Column(name = "email", nullable = false, length = 100, unique = true)
+    @NotBlank(message = "Email is required")
+    @Email(message = "Email format is invalid")
+    @Column(name = "email", nullable = false,unique = true, length = 100)
     private String email;
 
     @Column(name = "mobile", length = 15, unique = true)
     private String mobile;
 
-    // 🔐 NEVER send password to frontend
-    @JsonIgnore
+    @NotBlank(message = "Password is required")
     @Column(name = "password_hash", nullable = false)
     private String passwordHash;
 

@@ -1,13 +1,8 @@
 package com.example.entity;
 
+import jakarta.persistence.*;
 import java.math.BigDecimal;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import java.util.List;
 
 @Entity
 @Table(name = "product")
@@ -17,6 +12,11 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "prod_id")
     private Integer id;
+
+
+    // added for cartitem relationship, one product in many cartitem
+    @OneToMany(mappedBy = "prod")
+    private List<Cartitem> cartItems;
 
     @Column(name = "cat_master_id", nullable = false)
     private Integer categoryId;

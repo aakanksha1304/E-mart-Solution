@@ -1,17 +1,20 @@
 package com.example.controller;
 
-import com.example.dto.RegisterRequest;
-import com.example.dto.LoginRequest;
+import com.example.config.JwtUtil;
+import com.example.dto.LoginRequestDTO;
+import com.example.dto.LoginResponseDTO;
 import com.example.entity.User;
 import com.example.service.UserService;
-import org.springframework.http.ResponseEntity;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import com.example.dto.LoginRequest;
 
 @RestController
 @RequestMapping("/auth")
-@CrossOrigin(origins = "http://localhost:5173")
 public class AuthController {
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     private final UserService userService;
 
@@ -19,23 +22,54 @@ public class AuthController {
         this.userService = userService;
     }
 
-    // 🔥 REGISTER API
+    // REGISTER
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
-
-        User savedUser = userService.registerUser(request);
-
-        return ResponseEntity.ok(savedUser);
+    public User register(@RequestBody User user) {
+        return userService.register(user);
     }
 
-    // 🔥🔥 LOGIN API (THIS WAS MISSING)
+    // LOGIN
+//    @PostMapping("/login")
+//    public User login(
+//            @RequestParam String email,
+//            @RequestParam String password
+//    ) {
+//        return userService.login(email, password);
+//    }
+
+//    @PostMapping("/login")
+//    public User login(@Valid @RequestBody LoginRequestDTO dto) {
+//        return userService.login(dto.getEmail(), dto.getPassword());
+//    }
+
+//    @PostMapping("/login")
+//    public LoginResponseDTO login(@Valid @RequestBody LoginRequestDTO dto) {
+//
+//        User user = userService.login(dto.getEmail(), dto.getPassword());
+//
+//        LoginResponseDTO response = new LoginResponseDTO();
+//        response.setUserId(user.getId());
+//        response.setFullName(user.getFullName());
+//        response.setEmail(user.getEmail());
+//        response.setMessage("Login successful");
+//
+//        return response;
+//    }
+
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+    public LoginResponseDTO login(@Valid @RequestBody LoginRequestDTO dto) {
 
-        User user = userService.loginUser(
-                request.getEmail(),
-                request.getPassword());
+        User user = userService.login(dto.getEmail(), dto.getPassword());
 
-        return ResponseEntity.ok(user);
+        String token = jwtUtil.generateToken(user.getEmail());
+
+        LoginResponseDTO response = new LoginResponseDTO();
+        response.setUserId(user.getId());
+        response.setFullName(user.getFullName());
+        response.setEmail(user.getEmail());
+        response.setToken(token);
+        response.setMessage("Login successful");
+
+        return response;
     }
 }

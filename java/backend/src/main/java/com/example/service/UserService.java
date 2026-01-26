@@ -15,7 +15,7 @@ public interface UserService {
 
     User updateUser(Integer id, User updatedUser);
 
-    User registerUser(RegisterRequest request);
+    User register(User user);
 
-    User loginUser(String email, String password);
+    User login(String email, String password);
 }
