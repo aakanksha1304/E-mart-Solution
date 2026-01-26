@@ -6,27 +6,18 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "users")
+@Table(name = "users", uniqueConstraints = {
+        @UniqueConstraint(columnNames = "email"),
+        @UniqueConstraint(columnNames = "mobile")
+})
 public class User {
-    public Cart getCart() {
-        return cart;
-    }
-
-    public void setCart(Cart cart) {
-        this.cart = cart;
-    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private Integer id;
 
-    @OneToOne(
-            mappedBy = "user",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-//            fetch = FetchType.LAZY
-    )
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private Cart cart;
 
@@ -38,7 +29,7 @@ public class User {
     @Column(name = "email", nullable = false,unique = true, length = 100)
     private String email;
 
-    @Column(name = "mobile", length = 15)
+    @Column(name = "mobile", length = 15, unique = true)
     private String mobile;
 
     @NotBlank(message = "Password is required")
@@ -48,13 +39,7 @@ public class User {
     @Column(name = "address", length = 255)
     private String address;
 
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
+    // -------- GETTERS & SETTERS --------
 
     public Integer getId() {
         return id;
@@ -62,6 +47,14 @@ public class User {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Cart getCart() {
+        return cart;
+    }
+
+    public void setCart(Cart cart) {
+        this.cart = cart;
     }
 
     public String getFullName() {
@@ -96,4 +89,11 @@ public class User {
         this.passwordHash = passwordHash;
     }
 
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
 }

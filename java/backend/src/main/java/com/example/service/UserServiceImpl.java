@@ -1,5 +1,6 @@
 package com.example.service;
 
+import com.example.dto.RegisterRequest;
 import com.example.entity.User;
 import com.example.exception.GlobalExceptionHandler;
 import com.example.repository.UserRepository;
