@@ -1,21 +1,46 @@
-import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Login from "./pages/Login";
-import HomePage from "./pages/HomePage";
+import React from 'react';
+import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
+import './App.css';
+import Navbar from './components/Navbar';
+import HomePage from './pages/HomePage';
+import Login from './pages/Login';
+import CartPage from './pages/CartPage';
+import Footer from './components/Footer';
 
-function App() {
-  const [currentView, setCurrentView] = useState('home');
+// Wrapper component to provide navigation capability to Navbar
+const NavigationWrapper = () => {
+  const navigate = useNavigate();
 
-  const navigateToCart = () => setCurrentView('cart');
-  const navigateToHome = () => setCurrentView('home');
+  const handleCartClick = () => {
+    navigate('/cart');
+  };
+
+  const handleLogoClick = () => {
+    navigate('/');
+  };
 
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/home" element={<HomePage />} />
-      </Routes>
-    </BrowserRouter>
+    <Navbar
+      onCartClick={handleCartClick}
+      onLogoClick={handleLogoClick}
+    />
+  );
+};
+
+function App() {
+  return (
+    <div className="App">
+      <BrowserRouter>
+        <NavigationWrapper />
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/home" element={<HomePage />} />
+          <Route path="/cart" element={<CartPage />} />
+        </Routes>
+        <Footer />
+      </BrowserRouter>
+    </div>
   );
 }
 
