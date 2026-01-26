@@ -5,11 +5,9 @@ import com.example.entity.User;
 import com.example.repository.CartRepository;
 import com.example.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/cart")
@@ -20,12 +18,19 @@ public class CartController {
 
     @Autowired
     private UserRepository userRepository;
-   
-    @PostMapping("/create/{userId}")
-    public Cart createCart(@PathVariable Integer userId) {
 
-        User user = userRepository.findById(userId)
+    // CREATE cart for logged-in user
+    @PostMapping("/create")
+    public Cart createCart(Authentication authentication) {
+
+        String email = authentication.getName();
+
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (cartRepository.findByUser_Email(email).isPresent()) {
+            throw new RuntimeException("Cart already exists");
+        }
 
         Cart cart = new Cart();
         cart.setUser(user);
@@ -34,40 +39,26 @@ public class CartController {
         return cartRepository.save(cart);
     }
 
+    // GET logged-in user's cart
+    @GetMapping("/my")
+    public Cart getMyCart(Authentication authentication) {
 
+        String email = authentication.getName();
 
-//    @GetMapping("/{cartId}")
-//    public Cart getCartById(@PathVariable Integer cartId) {
-//        return cartRepository.findById(cartId)
-//                .orElseThrow(() -> new RuntimeException("Cart not found"));
-//    }
-
-
-    @GetMapping("/{cartId}")
-    public Cart getCartById(@PathVariable Integer cartId) {
-        return cartRepository.findById(cartId)
-                .orElseThrow(() ->
-                        new ResponseStatusException(
-                                HttpStatus.NOT_FOUND,
-                                "Cart not found"
-                        )
-                );
+        return cartRepository.findByUser_Email(email)
+                .orElseThrow(() -> new RuntimeException("Cart not found"));
     }
 
+    // UPDATE logged-in user's cart
+    @PutMapping("/update")
+    public Cart updateMyCart(
+            Authentication authentication,
+            @RequestBody Cart updatedCart
+    ) {
 
+        String email = authentication.getName();
 
-
-    @GetMapping("/all")
-    public List<Cart> getAllCarts() {
-        return cartRepository.findAll();
-    }
-
-
-    @PutMapping("/update/{cartId}")
-    public Cart updateCart(@PathVariable Integer cartId,
-                           @RequestBody Cart updatedCart) {
-
-        Cart cart = cartRepository.findById(cartId)
+        Cart cart = cartRepository.findByUser_Email(email)
                 .orElseThrow(() -> new RuntimeException("Cart not found"));
 
         cart.setIsActive(updatedCart.getIsActive());
@@ -75,14 +66,17 @@ public class CartController {
         return cartRepository.save(cart);
     }
 
+    // DELETE logged-in user's cart
+    @DeleteMapping("/delete")
+    public String deleteMyCart(Authentication authentication) {
 
-    @DeleteMapping("/delete/{cartId}")
-    public String deleteCart(@PathVariable Integer cartId) {
+        String email = authentication.getName();
 
-        Cart cart = cartRepository.findById(cartId)
+        Cart cart = cartRepository.findByUser_Email(email)
                 .orElseThrow(() -> new RuntimeException("Cart not found"));
 
         cartRepository.delete(cart);
         return "Cart deleted successfully";
     }
 }
+

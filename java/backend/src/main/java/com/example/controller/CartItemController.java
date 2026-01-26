@@ -10,6 +10,7 @@ import com.example.repository.CartRepository;
 import com.example.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -30,7 +31,7 @@ public class CartItemController {
     @Autowired
     private ProductRepository productRepository;
 
-    
+
 //    @PostMapping("/add")
 //    public CartItemResponseDTO addCartItem(@RequestBody CartItemRequestDTO dto) {
 //
@@ -41,7 +42,6 @@ public class CartItemController {
 //        Cart cart = cartRepository.findById(dto.getCartId())
 //                .orElseThrow(() -> new IllegalArgumentException("Cart not found!!!"));
 //
-//
 //        Product product = productRepository.findById(dto.getProductId())
 //                .orElseThrow(() ->
 //                        new ResponseStatusException(
@@ -50,46 +50,49 @@ public class CartItemController {
 //                        )
 //                );
 //
-//        Cartitem cartItem = new Cartitem();
-//        cartItem.setCart(cart);
-//        cartItem.setProd(product);
-//        cartItem.setQuantity(dto.getQuantity());
-//        cartItem.setPriceSnapshot(product.getMrpPrice());
+//        // 🔑 CHECK IF PRODUCT ALREADY EXISTS IN CART
+//        Cartitem cartItem = cartItemRepository
+//                .findByCartIdAndProdId(cart.getId(), product.getId())
+//                .orElse(null);
+//
+//        if (cartItem != null) {
+//            // ✅ DUPLICATE PRODUCT → INCREASE QUANTITY
+//            cartItem.setQuantity(cartItem.getQuantity() + dto.getQuantity());
+//        } else {
+//            // ✅ NEW PRODUCT
+//            cartItem = new Cartitem();
+//            cartItem.setCart(cart);
+//            cartItem.setProd(product);
+//            cartItem.setQuantity(dto.getQuantity());
+//            cartItem.setPriceSnapshot(product.getMrpPrice());
+//        }
 //
 //        Cartitem saved = cartItemRepository.save(cartItem);
-//
 //        return mapToResponseDTO(saved);
 //    }
 
-
+    // new
     @PostMapping("/add")
-    public CartItemResponseDTO addCartItem(@RequestBody CartItemRequestDTO dto) {
+    public CartItemResponseDTO addCartItem(
+            @RequestBody CartItemRequestDTO dto,
+            Authentication authentication
+    ) {
 
-        if (dto.getQuantity() == null || dto.getQuantity() <= 0) {
-            throw new IllegalArgumentException("Quantity must be greater than 0");
-        }
+        String email = authentication.getName();
 
-        Cart cart = cartRepository.findById(dto.getCartId())
-                .orElseThrow(() -> new IllegalArgumentException("Cart not found!!!"));
+        Cart cart = cartRepository.findByUser_Email(email)
+                .orElseThrow(() -> new RuntimeException("Cart not found"));
 
         Product product = productRepository.findById(dto.getProductId())
-                .orElseThrow(() ->
-                        new ResponseStatusException(
-                                HttpStatus.NOT_FOUND,
-                                "Product not found!!"
-                        )
-                );
+                .orElseThrow(() -> new RuntimeException("Product not found"));
 
-        // 🔑 CHECK IF PRODUCT ALREADY EXISTS IN CART
         Cartitem cartItem = cartItemRepository
                 .findByCartIdAndProdId(cart.getId(), product.getId())
                 .orElse(null);
 
         if (cartItem != null) {
-            // ✅ DUPLICATE PRODUCT → INCREASE QUANTITY
             cartItem.setQuantity(cartItem.getQuantity() + dto.getQuantity());
         } else {
-            // ✅ NEW PRODUCT
             cartItem = new Cartitem();
             cartItem.setCart(cart);
             cartItem.setProd(product);
@@ -97,21 +100,26 @@ public class CartItemController {
             cartItem.setPriceSnapshot(product.getMrpPrice());
         }
 
-        Cartitem saved = cartItemRepository.save(cartItem);
-        return mapToResponseDTO(saved);
+        return mapToResponseDTO(cartItemRepository.save(cartItem));
     }
 
+    // new
+    @GetMapping("/my")
+    public List<CartItemResponseDTO> getMyCartItems(Authentication authentication) {
 
+        String email = authentication.getName();
 
-    @GetMapping("/cart/{cartId}")
-    public List<CartItemResponseDTO> getItemsByCart(@PathVariable Integer cartId) {
+        Cart cart = cartRepository.findByUser_Email(email)
+                .orElseThrow(() -> new RuntimeException("Cart not found"));
 
-        return cartItemRepository.findByCart_Id(cartId)
+        return cartItemRepository.findByCart_Id(cart.getId())
                 .stream()
                 .map(this::mapToResponseDTO)
                 .collect(Collectors.toList());
     }
 
+
+    // update without jwt
 
     @PutMapping("/update/{id}")
     public CartItemResponseDTO updateCartItem(
@@ -130,6 +138,7 @@ public class CartItemController {
         return mapToResponseDTO(cartItemRepository.save(cartItem));
     }
 
+    // delete without jwt
    
     @DeleteMapping("/delete/{id}")
     public String deleteCartItem(@PathVariable Integer id) {

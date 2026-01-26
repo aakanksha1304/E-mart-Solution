@@ -10,4 +10,8 @@ public interface UserService {
     void deleteUser(Integer id);
 
     User updateUser(Integer id, User updatedUser);
+
+    User register(User user);
+
+    User login(String email, String password);
 }
