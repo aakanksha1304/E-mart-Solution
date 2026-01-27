@@ -16,6 +16,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
     @Autowired
     private JwtFilter jwtFilter;
 
@@ -23,21 +24,20 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
-                .csrf(csrf -> csrf.disable())
-                .formLogin(form -> form.disable())
-                .httpBasic(basic -> basic.disable())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
-                        // .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/products/**").permitAll()
-                        .requestMatchers("/categories/**").permitAll()
-                        .requestMatchers("/cart/**").authenticated()
-                        // .requestMatchers("/orders/**").authenticated()
-                        // .requestMatchers("/payment/**").authenticated()
-                        .anyRequest().permitAll())
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+            .csrf(csrf -> csrf.disable())
+            .formLogin(form -> form.disable())
+            .httpBasic(basic -> basic.disable())
+            .sessionManagement(session ->
+                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
+                .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
+                .requestMatchers("/products/**").permitAll()
+                .requestMatchers("/categories/**").permitAll()
+                .requestMatchers("/cart/**").authenticated()
+                .anyRequest().permitAll()
+            )
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
