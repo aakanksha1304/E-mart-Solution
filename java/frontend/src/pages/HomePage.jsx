@@ -4,8 +4,11 @@ import axios from 'axios';
 import CategoryBar from '../components/CategoryBar';
 import AdBanner from '../components/AdBanner';
 import styles from '../styles/HomePage.module.css';
+import { useNavigate } from "react-router-dom";
 
 const HomePage = () => {
+
+    const navigate = useNavigate();   // 🔥 FOR CATEGORY CLICK
 
     // 🔥 Categories from backend
     const [categories, setCategories] = useState([]);
@@ -49,10 +52,18 @@ const HomePage = () => {
 
                     <div className={styles.categoryGrid}>
                         {categories.map(cat => (
-                            <div key={cat.id} className={styles.categoryCard}>
+                            <div
+                                key={cat.id}
+                                className={styles.categoryCard}
+                                onClick={() => {
+                                    console.log("Clicked category:", cat.catId);  // 🔥 DEBUG
+                                    navigate(`/browse/${cat.catId}`);
+                                }}
+                                style={{ cursor: "pointer" }}
+                            >
                                 <div className={styles.catImageContainer}>
                                     <img
-                                        src={cat.catImagePath}   // 🔥 DIRECT FROM DB
+                                        src={cat.catImagePath}   // 🔥 LOAD DIRECTLY FROM /public/images
                                         alt={cat.catName}
                                         className={styles.catImage}
                                         onError={(e) => {

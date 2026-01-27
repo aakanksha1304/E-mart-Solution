@@ -15,7 +15,7 @@ public class CatalogServiceImpl implements CatalogService {
     private final ProductService productService;
 
     public CatalogServiceImpl(CatMasterRepository catRepo,
-                              ProductService productService) {
+            ProductService productService) {
         this.catRepo = catRepo;
         this.productService = productService;
     }
@@ -34,7 +34,7 @@ public class CatalogServiceImpl implements CatalogService {
 
     // 3️⃣ Products of a category (leaf)
     @Override
-    public List<Product> getProducts(Integer catMasterId) {
+    public List<Product> getProductsByCategory(Integer catMasterId) {
         return productService.getProductsByCategory(catMasterId);
     }
 
@@ -44,29 +44,29 @@ public class CatalogServiceImpl implements CatalogService {
 
         CategoryBrowseResponse response = new CategoryBrowseResponse();
 
+        // Find category by Cat_Id
         Catmaster category = catRepo.findByCatId(catId);
         if (category == null) {
             throw new RuntimeException("Category not found: " + catId);
         }
 
-        // 🔥 DATA-DRIVEN CHECK (FIXED LOGIC)
+        // 🔥 Check if subcategories exist
         List<Catmaster> subCategories = catRepo.findBySubcatId(catId);
 
-        // Case 1: Subcategories exist → navigation
+        // Case 1: Subcategories exist → return navigation
         if (!subCategories.isEmpty()) {
             response.setHasSubCategories(true);
             response.setSubCategories(subCategories);
-            response.setProduct(null);
+            response.setProducts(null); // ✅ FIXED
             return response;
         }
 
-        // Case 2: Leaf category → products
-        List<Product> products =
-                productService.getProductsByCategory(category.getId());
+        // Case 2: Leaf category → return products
+        List<Product> products = productService.getProductsByCategory(category.getId());
 
         response.setHasSubCategories(false);
         response.setSubCategories(null);
-        response.setProduct(products);
+        response.setProducts(products); // ✅ FIXED
 
         return response;
     }
