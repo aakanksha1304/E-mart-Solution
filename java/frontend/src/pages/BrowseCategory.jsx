@@ -1,89 +1,179 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import styles from "../styles/HomePage.module.css"; // reuse same grid styles
+import styles from "../styles/HomePage.module.css";
+
+// 🔥 CART CONTEXT
+import { useCart } from "../context/CartContext";
 
 const BrowseCategory = () => {
+  const { catId } = useParams(); // Example: C001, MOB001 etc
+  const navigate = useNavigate();
 
-    const { catId } = useParams();   // C001, C002, etc
-    const [products, setProducts] = useState([]);
-    const [loading, setLoading] = useState(true);
+  const { addToCart, cartItems } = useCart();
 
-    useEffect(() => {
-        console.log("Browsing category:", catId);
+  const [products, setProducts] = useState([]);
+  const [subCategories, setSubCategories] = useState([]);
+  const [hasSubCategories, setHasSubCategories] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-        axios
-            .get(`http://localhost:8080/api/catalog/categories/${catId}`)
-            .then(res => {
-                console.log("Browse API response:", res.data);
+  // ✅ Check if product already exists in cart
+  const isInCart = (productId) => {
+    return cartItems.some((item) => item.id === productId);
+  };
 
-                // If this category has NO subcategories → products come here
-                if (!res.data.hasSubCategories) {
-                    setProducts(res.data.products || []);
-                }
+  // ✅ Load Category Data
+  useEffect(() => {
+    setLoading(true);
 
-                setLoading(false);
-            })
-            .catch(err => {
-                console.error("Error loading category products:", err);
-                setLoading(false);
-            });
+    axios
+      .get(`http://localhost:8080/api/catalog/categories/${catId}`)
+      .then((res) => {
+        const data = res.data;
 
-    }, [catId]);
+        console.log("CATEGORY RESPONSE:", data);
 
-    if (loading) {
-        return <h2 style={{ textAlign: "center", marginTop: "40px" }}>Loading products...</h2>;
-    }
+        // ✅ Check if category has subcategories
+        setHasSubCategories(data.hasSubCategories);
 
+        // ✅ If Parent Category → Show Only Subcategories
+        if (data.hasSubCategories) {
+          setSubCategories(data.subCategories || []);
+          setProducts([]); // ❌ No products on main category page
+        }
+
+        // ✅ If Subcategory → Show Products
+        else {
+          setProducts(data.products || []);
+          setSubCategories([]); // ❌ No subcategories here
+        }
+
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Error loading category:", err);
+        setLoading(false);
+      });
+  }, [catId]);
+
+  // ✅ Loading Screen
+  if (loading) {
     return (
-        <div style={{ padding: "40px" }}>
-            <h2 style={{ marginBottom: "25px" }}>Products</h2>
-
-            <div className={styles.productGrid}>
-
-                {products.length === 0 && (
-                    <p style={{ fontSize: "18px" }}>No products found in this category.</p>
-                )}
-
-                {products.map(prod => {
-                    console.log("IMAGE PATH FROM API:", prod.prodImagePath); // 🔥 DEBUG
-
-                    return (
-                        <div key={prod.id} className={styles.productCard}>
-
-                            {/* 🔥 PRODUCT IMAGE */}
-                            <div className={styles.prodImageContainer}>
-                                <img
-                                    src={`/${prod.prodImagePath}`}   // 🔥 CORRECT PATH
-                                    alt={prod.prodName}
-                                    className={styles.prodImage}
-                                    onError={(e) => {
-                                        console.log("Image failed:", prod.prodImagePath);
-                                        e.target.src = "/images/default.jpg";
-                                    }}
-                                />
-
-                            </div>
-
-                            {/* 🔥 PRODUCT INFO */}
-                            <div className={styles.prodInfo}>
-                                <h3 className={styles.prodName}>{prod.prodName}</h3>
-
-                                <div className={styles.prodPrice}>
-                                    ₹ {prod.cardholderPrice}
-                                </div>
-
-                                <button className={styles.addToCartBtn}>
-                                    Add to Cart
-                                </button>
-                            </div>
-
-                        </div>
-                    );
-                })}
-            </div>
-        </div>
+      <h2 style={{ textAlign: "center", marginTop: "40px" }}>
+        Loading...
+      </h2>
     );
+  }
+
+  return (
+    <div style={{ padding: "40px" }}>
+
+      {/* ✅ MAIN CATEGORY VIEW → ONLY SUBCATEGORIES */}
+      {hasSubCategories && (
+        <>
+          <h2 style={{ marginBottom: "25px" }}>Categories</h2>
+
+          <div className={styles.categoryGrid}>
+            {subCategories.length === 0 ? (
+              <p>No subcategories found.</p>
+            ) : (
+              subCategories.map((sub) => (
+                <div
+                  key={sub.id}
+                  className={styles.categoryCard}
+                  onClick={() => navigate(`/browse/${sub.catId}`)}
+                  style={{ cursor: "pointer" }}
+                >
+                  <div className={styles.catImageContainer}>
+                    <img
+                      src={sub.catImagePath}
+                      alt={sub.catName}
+                      className={styles.catImage}
+                      onError={(e) =>
+                        (e.target.src = "/images/default.jpg")
+                      }
+                    />
+                  </div>
+
+                  <div className={styles.catName}>
+                    {sub.catName}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </>
+      )}
+
+      {/* ✅ SUBCATEGORY VIEW → ONLY PRODUCTS */}
+      {!hasSubCategories && (
+        <>
+          <h2 style={{ marginBottom: "25px" }}>Products</h2>
+
+          <div className={styles.productGrid}>
+            {products.length === 0 ? (
+              <p style={{ fontSize: "18px" }}>
+                No products found in this subcategory.
+              </p>
+            ) : (
+              products.map((prod) => (
+                <div key={prod.id} className={styles.productCard}>
+
+                  {/* ✅ Product Image */}
+                  <div className={styles.prodImageContainer}>
+                    <img
+                      src={`/${prod.prodImagePath}`}
+                      alt={prod.prodName}
+                      className={styles.prodImage}
+                      onError={(e) =>
+                        (e.target.src = "/images/default.jpg")
+                      }
+                    />
+                  </div>
+
+                  {/* ✅ Product Info */}
+                  <div className={styles.prodInfo}>
+                    <h3 className={styles.prodName}>
+                      {prod.prodName}
+                    </h3>
+
+                    <div className={styles.prodPrice}>
+                      ₹ {prod.cardholderPrice}
+                    </div>
+
+                    {/* ✅ Add To Cart Button */}
+                    <button
+                      className={styles.addToCartBtn}
+                      onClick={() =>
+                        addToCart({
+                          id: prod.id,
+                          name: prod.prodName,
+                          price: prod.cardholderPrice,
+                          image: `/${prod.prodImagePath}`,
+                          quantity: 1,
+                        })
+                      }
+                      disabled={isInCart(prod.id)}
+                      style={{
+                        opacity: isInCart(prod.id) ? 0.6 : 1,
+                        cursor: isInCart(prod.id)
+                          ? "not-allowed"
+                          : "pointer",
+                      }}
+                    >
+                      {isInCart(prod.id)
+                        ? "Added to Cart"
+                        : "Add to Cart"}
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </>
+      )}
+    </div>
+  );
 };
 
 export default BrowseCategory;
