@@ -9,11 +9,11 @@ import org.springframework.core.io.InputStreamSource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.example.entity.Ordermaster;
 import com.example.entity.User;
-
 
 @Service
 public class EmailService {
@@ -21,20 +21,25 @@ public class EmailService {
     @Autowired
     private JavaMailSender mailSender;
 
-    // ✅ Login success mail
+    // ✅ Login Success Mail
+    @Async
     public void sendLoginSuccessMail(User user) {
+
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(user.getEmail());
         message.setSubject("Login Successful");
+
         message.setText(
-                "Hello " + user.getFullName() + ",\n\n" +
-                "You have successfully logged in.\n\n" +
-                "Regards,\nE-Mart Team"
+                "Hello " + user.getFullName() + ",\n\n"
+                        + "You have successfully logged in to E-Mart.\n\n"
+                        + "Regards,\nE-Mart Team"
         );
+
         mailSender.send(message);
     }
 
-    // ✅ Payment success mail + invoice
+    // ✅ Payment Success Mail + Invoice Attachment
+    @Async
     public void sendPaymentSuccessMail(Ordermaster order, byte[] invoicePdf) throws Exception {
 
         MimeMessage message = mailSender.createMimeMessage();
@@ -44,10 +49,10 @@ public class EmailService {
         helper.setSubject("Payment Successful - Invoice Attached");
 
         helper.setText(
-                "Hello " + order.getUser().getFullName() + ",<br/><br/>" +
-                "Your payment was successful.<br/>" +
-                "Please find your invoice attached.<br/><br/>" +
-                "Regards,<br/>E-Mart Team",
+                "Hello " + order.getUser().getFullName() + ",<br/><br/>"
+                        + "Your payment was successful.<br/>"
+                        + "Please find your invoice attached.<br/><br/>"
+                        + "Regards,<br/>E-Mart Team",
                 true
         );
 
