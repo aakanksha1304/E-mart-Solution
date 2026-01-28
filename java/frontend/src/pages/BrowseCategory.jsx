@@ -116,7 +116,7 @@ const BrowseCategory = () => {
                                     <h3 className={styles.prodName}>{prod.prodName}</h3>
 
                                     <div className={styles.prodPrice}>
-                                        ₹ {prod.cardholderPrice}
+                                        ₹{prod.cardholderPrice}
                                     </div>
 
                                     {/* 🔥 ADD TO CART */}
@@ -127,6 +127,9 @@ const BrowseCategory = () => {
                                                 id: prod.id,
                                                 name: prod.prodName,
                                                 price: prod.cardholderPrice,
+                                                mrpPrice: prod.mrpPrice,
+                                                cardholderPrice: prod.cardholderPrice,
+                                                pointsToBeRedeem: prod.pointsToBeRedeem,
                                                 image: `/${prod.prodImagePath}`,
                                                 quantity: 1
                                             })

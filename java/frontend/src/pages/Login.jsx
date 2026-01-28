@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { GoogleLogin } from "@react-oauth/google";
-import {jwtDecode} from "jwt-decode"; // 🔥 IMPORTANT
+import { jwtDecode } from "jwt-decode"; // 🔥 IMPORTANT
 import "../styles/Login.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -25,6 +25,15 @@ function Login() {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const [errors, setErrors] = useState({});
+
+  // redirection logic if already logged in
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const user = localStorage.getItem("user");
+    if (token && user) {
+      navigate("/home");
+    }
+  }, [navigate]);
 
   // Update height when flip state changes
   useEffect(() => {
