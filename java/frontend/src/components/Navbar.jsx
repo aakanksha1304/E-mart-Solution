@@ -17,12 +17,15 @@ const Navbar = ({ onCartClick, onLogoClick }) => {
     // Check login status
     useEffect(() => {
         const checkLogin = () => {
-            const user = localStorage.getItem('user');
-            setIsLoggedIn(!!user);
+            const token = localStorage.getItem('token');
+            setIsLoggedIn(!!token);
         };
 
         checkLogin();
+
+        // storage event works for other tabs
         window.addEventListener('storage', checkLogin);
+
         return () => window.removeEventListener('storage', checkLogin);
     }, [location]);
 
@@ -77,7 +80,22 @@ const Navbar = ({ onCartClick, onLogoClick }) => {
                 </div>
 
                 <div className={`${styles.navLinks} ${isMobileMenuOpen ? styles.active : ''}`}>
-                    <button className={styles.navItem} onClick={onCartClick}>
+                    <button
+                        className={styles.navItem}
+                        onClick={() => {
+                            const token = localStorage.getItem("token");
+
+                            if (!token) {
+                                alert("Please login to access your cart");
+                                navigate("/login", {
+                                    state: { from: "/cart" }
+                                });
+                                return;
+                            }
+
+                            onCartClick();
+                        }}
+                    >
                         <div className={styles.iconWrapper}>
                             <FiShoppingCart />
                             {cartCount > 0 && <span className={styles.badge}>{cartCount}</span>}

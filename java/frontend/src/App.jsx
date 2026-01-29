@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
 import './App.css';
+import ScrollToTop from "./components/ScrollToTop";
 
 /* LAYOUT */
 import Navbar from './components/Navbar';
@@ -39,43 +40,44 @@ const NavigationWrapper = () => {
 
 function App() {
   return (
-    <CartProvider>
-      <div className="App">
-        <BrowserRouter>
+    <ScrollToTop />   {/* ✅ MUST be here */ }
+  <CartProvider>
+    <div className="App">
+      <BrowserRouter>
 
-          {/* NAVBAR */}
-          <NavigationWrapper />
+        {/* NAVBAR */}
+        <NavigationWrapper />
 
-          {/* ROUTES */}
-          <Routes>
+        {/* ROUTES */}
+        <Routes>
 
-            {/* AUTH */}
-            <Route path="/" element={<HomePage />} />
-            <Route path="/login" element={<Login />} />
+          {/* AUTH */}
+          <Route path="/" element={<HomePage />} />
+          <Route path="/login" element={<Login />} />
 
-            {/* HOME */}
-            <Route path="/home" element={<HomePage />} />
+          {/* HOME */}
+          <Route path="/home" element={<HomePage />} />
 
-            {/* CHECKOUT */}
-            <Route path="/checkout/address" element={<CheckoutAddress />} />
+          {/* CHECKOUT */}
+          <Route path="/checkout/address" element={<CheckoutAddress />} />
 
-            {/* PAYMENT */}
-            <Route path="/payment" element={<Payment />} />
+          {/* PAYMENT */}
+          <Route path="/payment" element={<Payment />} />
 
-            {/* CATEGORY */}
-            <Route path="/browse/:catId" element={<BrowseCategory />} />
+          {/* CATEGORY */}
+          <Route path="/browse/:catId" element={<BrowseCategory />} />
 
-            {/* CART */}
-            <Route path="/cart" element={<CartPage />} />
+          {/* CART */}
+          <Route path="/cart" element={<CartPage />} />
 
-          </Routes>
+        </Routes>
 
-          {/* FOOTER */}
-          <Footer />
+        {/* FOOTER */}
+        <Footer />
 
-        </BrowserRouter>
-      </div>
-    </CartProvider>
+      </BrowserRouter>
+    </div>
+  </CartProvider>
   );
 }
 
