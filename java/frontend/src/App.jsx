@@ -17,6 +17,8 @@ import CheckoutAddress from "./pages/CheckoutAddress";
 import Payment from "./pages/Payment";
 import ProfilePage from "./pages/ProfilePage";
 import ProductDetails from "./pages/ProductDetails";
+import SearchResults from "./pages/SearchResults";
+
 
 /* CONTEXT */
 import { CartProvider } from "./context/CartContext";
@@ -62,8 +64,10 @@ function App() {
             {/* PROFILE */}
             <Route path="/profile" element={<ProfilePage />} />
 
-            {/* CART */}
-            <Route path="/cart" element={<CartPage />} />
+              <Route path="/search" element={<SearchResults />} />
+
+              {/* CART */}
+              <Route path="/cart" element={<CartPage />} />
 
             {/* CHECKOUT */}
             <Route path="/checkout/address" element={<CheckoutAddress />} />

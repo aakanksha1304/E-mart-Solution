@@ -38,6 +38,31 @@ const Payment = () => {
         };
     }, []);
 
+    // Points logic
+    const maxPointsPossible = Math.min(loyaltyCard?.pointsBalance || 0, total);
+
+    // useEffect(() => {
+    //     if (paymentChoice === "POINTS") {
+    //         setPointsToUse(maxPointsPossible);
+    //     } else if (paymentChoice === "CASH") {
+    //         setPointsToUse(0);
+    //     }
+    // }, [paymentChoice, maxPointsPossible]);
+
+    useEffect(() => {
+  if (paymentChoice === "CASH") {
+    setPointsToUse(0);
+  }
+}, [paymentChoice]);
+
+
+    const handlePointsChange = (val) => {
+        const num = parseInt(val) || 0;
+        setPointsToUse(Math.min(Math.max(0, num), maxPointsPossible));
+    };
+
+    const finalPayable = Math.max(0, total - pointsToUse);
+
     const handleRazorpayPayment = async (orderId, userId, user) => {
         try {
             // 1. Create Razorpay Order on Backend
@@ -271,6 +296,75 @@ const Payment = () => {
                             <span className={styles.methodDesc}>Order now, pay on arrival</span>
                         </div>
                     </div>
+
+                    {loyaltyCard && (
+                        <div style={{ marginTop: '40px' }}>
+                            <h2 className={styles.sectionTitle} style={{ fontSize: '1.2rem', color: '#bf953f' }}>
+                                <FiGift /> Redeem Loyalty Points
+                            </h2>
+                            <p style={{ fontSize: '0.9rem', color: '#6b7280', marginBottom: '20px' }}>
+                                Available Balance: <strong>{loyaltyCard.pointsBalance} Points</strong> (1 Point = ₹1)
+                            </p>
+
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '15px' }}>
+                                <button
+                                    onClick={() => setPaymentChoice("CASH")}
+                                    style={{
+                                        padding: '12px', borderRadius: '12px', border: paymentChoice === 'CASH' ? '2px solid #6366f1' : '1px solid #e5e7eb',
+                                        background: paymentChoice === 'CASH' ? 'rgba(99, 102, 241, 0.05)' : 'white', cursor: 'pointer', fontWeight: '600'
+                                    }}
+                                >
+                                    Cash Only
+                                </button>
+                                {/* <button
+                                    onClick={() => setPaymentChoice("POINTS")}
+                                    disabled={loyaltyCard.pointsBalance === 0}
+                                    style={{
+                                        padding: '12px', borderRadius: '12px', border: paymentChoice === 'POINTS' ? '2px solid #6366f1' : '1px solid #e5e7eb',
+                                        background: paymentChoice === 'POINTS' ? 'rgba(99, 102, 241, 0.05)' : 'white', cursor: 'pointer', fontWeight: '600',
+                                        opacity: loyaltyCard.pointsBalance === 0 ? 0.5 : 1
+                                    }}
+                                >
+                                    Points Only
+                                </button> */}
+                                <button
+                                    onClick={() => setPaymentChoice("BOTH")}
+                                    disabled={loyaltyCard.pointsBalance === 0}
+                                    style={{
+                                        padding: '12px', borderRadius: '12px', border: paymentChoice === 'BOTH' ? '2px solid #6366f1' : '1px solid #e5e7eb',
+                                        background: paymentChoice === 'BOTH' ? 'rgba(99, 102, 241, 0.05)' : 'white', cursor: 'pointer', fontWeight: '600',
+                                        opacity: loyaltyCard.pointsBalance === 0 ? 0.5 : 1
+                                    }}
+                                >
+                                    Both
+                                </button>
+                            </div>
+
+                            {paymentChoice === "BOTH" && (
+                                <div style={{ marginTop: '20px', padding: '15px', background: '#f9fafb', borderRadius: '12px' }}>
+                                    <label style={{ display: 'block', fontSize: '0.85rem', color: '#4b5563', marginBottom: '8px' }}>
+                                        Enter points to redeem (Max {maxPointsPossible}):
+                                    </label>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                        <input
+                                            type="number"
+                                            value={pointsToUse}
+                                            onChange={(e) => handlePointsChange(e.target.value)}
+                                            style={{
+                                                flex: 1, padding: '10px', borderRadius: '8px', border: '1px solid #d1d5db',
+                                                fontSize: '1rem', outline: 'none'
+                                            }}
+                                        />
+                                        <button onClick={() => setPointsToUse(maxPointsPossible)} style={{
+                                            padding: '10px 15px', borderRadius: '8px', border: 'none', background: '#6366f1', color: 'white', fontWeight: '600', cursor: 'pointer'
+                                        }}>
+                                            Max
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    )}
 
                     <div style={{
                         marginTop: '50px', padding: '25px', borderRadius: '24px', background: 'rgba(99, 102, 241, 0.05)',
