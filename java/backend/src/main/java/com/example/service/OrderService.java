@@ -5,8 +5,7 @@ import java.util.List;
 
 public interface OrderService {
 
-    Ordermaster placeOrderFromCart(Integer userId, Integer cartId, String paymentMode,
-            java.math.BigDecimal pointsToRedeem);
+    Ordermaster placeOrderFromCart(Integer userId, Integer cartId, String paymentMode);
 
     List<Ordermaster> getAllOrders();
 
