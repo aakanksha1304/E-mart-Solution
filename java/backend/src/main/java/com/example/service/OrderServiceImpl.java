@@ -23,26 +23,22 @@ public class OrderServiceImpl implements OrderService {
     private final UserRepository userRepository;
     private final CartItemRepository cartItemRepository;
     private final OrderItemRepository orderItemRepository;
-    private final LoyaltycardService loyaltycardService;
 
     // ✅ Constructor Injection
     public OrderServiceImpl(OrderRepository orderRepository,
             UserRepository userRepository,
             CartItemRepository cartItemRepository,
-            OrderItemRepository orderItemRepository,
-            LoyaltycardService loyaltycardService) {
+            OrderItemRepository orderItemRepository) {
         this.orderRepository = orderRepository;
         this.userRepository = userRepository;
         this.cartItemRepository = cartItemRepository;
         this.orderItemRepository = orderItemRepository;
-        this.loyaltycardService = loyaltycardService;
     }
 
     // ✅ MAIN METHOD: Place Order from Cart
     @Override
     @Transactional
-    public Ordermaster placeOrderFromCart(Integer userId, Integer cartId, String paymentMode,
-            java.math.BigDecimal pointsToRedeem) {
+    public Ordermaster placeOrderFromCart(Integer userId, Integer cartId, String paymentMode) {
 
         // ✅ Step 1: Check User exists
         User user = userRepository.findById(userId)
@@ -174,14 +170,12 @@ public class OrderServiceImpl implements OrderService {
         ordermaster.setPaymentMode(paymentMode);
         ordermaster.setOrderStatus("Pending");
         ordermaster.setTotalAmount(totalAmount);
-        ordermaster.setAmountPaidByCash(amountPaidByCash);
-        ordermaster.setAmountPaidByPoints(amountPaidByPoints);
         ordermaster.setItems(new ArrayList<>()); // Initialize the items list
 
-        // ✅ Step 6: Save OrderMaster
+        // ✅ Step 5: Save OrderMaster
         Ordermaster savedOrder = orderRepository.save(ordermaster);
 
-        // ✅ Step 7: Create OrderItem list from cart items
+        // ✅ Step 6: Create OrderItem list from cart items
         for (Cartitem cartItem : cartItems) {
             OrderItem orderItem = new OrderItem();
             orderItem.setOrder(savedOrder);

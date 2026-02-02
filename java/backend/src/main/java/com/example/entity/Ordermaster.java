@@ -31,12 +31,6 @@ public class Ordermaster {
     @Column(name = "payment_mode", length = 30)
     private String paymentMode;
 
-    @Column(name = "amount_paid_by_cash", precision = 10, scale = 2)
-    private BigDecimal amountPaidByCash;
-
-    @Column(name = "amount_paid_by_points", precision = 10, scale = 2)
-    private BigDecimal amountPaidByPoints;
-
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private java.util.List<OrderItem> items;
 
@@ -86,22 +80,6 @@ public class Ordermaster {
 
     public void setPaymentMode(String paymentMode) {
         this.paymentMode = paymentMode;
-    }
-
-    public BigDecimal getAmountPaidByCash() {
-        return amountPaidByCash;
-    }
-
-    public void setAmountPaidByCash(BigDecimal amountPaidByCash) {
-        this.amountPaidByCash = amountPaidByCash;
-    }
-
-    public BigDecimal getAmountPaidByPoints() {
-        return amountPaidByPoints;
-    }
-
-    public void setAmountPaidByPoints(BigDecimal amountPaidByPoints) {
-        this.amountPaidByPoints = amountPaidByPoints;
     }
 
     public java.util.List<OrderItem> getItems() {

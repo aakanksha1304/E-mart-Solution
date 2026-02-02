@@ -47,36 +47,34 @@ function App() {
           <NavigationWrapper />
 
           {/* ROUTES */}
-          <main className="main-layout">
-            <Routes>
-              {/* AUTH */}
-              <Route path="/" element={<HomePage />} />
-              <Route path="/login" element={<Login />} />
+          <Routes>
+            {/* AUTH */}
+            <Route path="/" element={<HomePage />} />
+            <Route path="/login" element={<Login />} />
 
-              {/* HOME */}
-              <Route path="/home" element={<HomePage />} />
+            {/* HOME */}
+            <Route path="/home" element={<HomePage />} />
 
-              {/* CATEGORY */}
-              <Route path="/browse/:catId" element={<BrowseCategory />} />
+            {/* CATEGORY */}
+            <Route path="/browse/:catId" element={<BrowseCategory />} />
 
-              {/* PRODUCT DETAILS */}
-              <Route path="/product/:id" element={<ProductDetails />} />
+            {/* PRODUCT DETAILS */}
+            <Route path="/product/:id" element={<ProductDetails />} />
 
-              {/* PROFILE */}
-              <Route path="/profile" element={<ProfilePage />} />
+            {/* PROFILE */}
+            <Route path="/profile" element={<ProfilePage />} />
 
               <Route path="/search" element={<SearchResults />} />
 
               {/* CART */}
               <Route path="/cart" element={<CartPage />} />
 
-              {/* CHECKOUT */}
-              <Route path="/checkout/address" element={<CheckoutAddress />} />
+            {/* CHECKOUT */}
+            <Route path="/checkout/address" element={<CheckoutAddress />} />
 
-              {/* PAYMENT */}
-              <Route path="/payment" element={<Payment />} />
-            </Routes>
-          </main>
+            {/* PAYMENT */}
+            <Route path="/payment" element={<Payment />} />
+          </Routes>
 
           {/* FOOTER */}
           <Footer />

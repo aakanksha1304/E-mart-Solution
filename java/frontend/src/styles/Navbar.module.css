@@ -50,8 +50,8 @@
 
 .searchContainer {
     flex: 1;
-    max-width: 480px;
-    margin: 0 2rem;
+    max-width: 460px;
+    margin: 0 3rem;
     display: flex;
     align-items: center;
     position: relative;

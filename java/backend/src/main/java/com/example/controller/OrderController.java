@@ -23,8 +23,7 @@ public class OrderController {
         return orderService.placeOrderFromCart(
                 request.getUserId(),
                 request.getCartId(),
-                request.getPaymentMode(),
-                request.getPointsToRedeem());
+                request.getPaymentMode());
     }
 
     @GetMapping
