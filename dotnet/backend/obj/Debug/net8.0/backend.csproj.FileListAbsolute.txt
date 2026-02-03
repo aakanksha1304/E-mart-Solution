@@ -92,7 +92,6 @@ C:\Users\Viraj Gavas\OneDrive\Desktop\cope4\PG-DAC_E-Mart_Project\dotnet\backend
 C:\Users\Viraj Gavas\OneDrive\Desktop\cope4\PG-DAC_E-Mart_Project\dotnet\backend\obj\Debug\net8.0\backend.AssemblyInfo.cs
 C:\Users\Viraj Gavas\OneDrive\Desktop\cope4\PG-DAC_E-Mart_Project\dotnet\backend\obj\Debug\net8.0\backend.csproj.CoreCompileInputs.cache
 C:\Users\Viraj Gavas\OneDrive\Desktop\cope4\PG-DAC_E-Mart_Project\dotnet\backend\obj\Debug\net8.0\backend.MvcApplicationPartsAssemblyInfo.cache
-C:\Users\Viraj Gavas\OneDrive\Desktop\cope4\PG-DAC_E-Mart_Project\dotnet\backend\obj\Debug\net8.0\backend.sourcelink.json
 C:\Users\Viraj Gavas\OneDrive\Desktop\cope4\PG-DAC_E-Mart_Project\dotnet\backend\obj\Debug\net8.0\rjimswa.dswa.cache.json
 C:\Users\Viraj Gavas\OneDrive\Desktop\cope4\PG-DAC_E-Mart_Project\dotnet\backend\obj\Debug\net8.0\rjsmrazor.dswa.cache.json
 C:\Users\Viraj Gavas\OneDrive\Desktop\cope4\PG-DAC_E-Mart_Project\dotnet\backend\obj\Debug\net8.0\rjsmcshtml.dswa.cache.json
