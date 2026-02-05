@@ -3,23 +3,16 @@ import axios from 'axios';
 
 import CategoryBar from '../components/CategoryBar';
 import AdBanner from '../components/AdBanner';
+import ProductCard from '../components/ProductCard';
 import styles from '../styles/HomePage.module.css';
 import { useNavigate } from "react-router-dom";
-import { useCart } from '../context/CartContext';
 
 const HomePage = () => {
 
     const navigate = useNavigate();
-    const { addToCart, removeFromCart, cartItems } = useCart();
-
     const [categories, setCategories] = useState([]);
     const [featuredProducts, setFeaturedProducts] = useState([]);
     const [loading, setLoading] = useState(true);
-
-    // Check if product is in cart
-    const isInCart = (productId) => {
-        return cartItems.some(item => item.id === productId);
-    };
 
     // Fetch data on page load
     useEffect(() => {
@@ -140,70 +133,7 @@ const HomePage = () => {
                             <p>Loading featured products...</p>
                         ) : (
                             featuredProducts.map(prod => (
-                                <div key={prod.id} className={styles.productCard}>
-                                    <button className={styles.wishlistBtn}>
-                                        <svg className={styles.wishlistIcon} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                                        </svg>
-                                    </button>
-
-                                    <div
-                                        className={styles.prodImageContainer}
-                                        onClick={() => navigate(`/product/${prod.id}`)}
-                                        style={{ cursor: 'pointer' }}
-                                    >
-                                        <img
-                                            src={`${prod.prodImagePath}`}
-                                            alt={prod.prodName}
-                                            className={styles.prodImage}
-                                            onError={(e) => e.target.src = '/images/default.jpg'}
-                                        />
-                                    </div>
-                                    <div className={styles.prodInfo}>
-                                        <h3
-                                            className={styles.prodName}
-                                            onClick={() => navigate(`/product/${prod.id}`)}
-                                            style={{ cursor: 'pointer' }}
-                                        >{prod.prodName}</h3>
-                                        <div className={styles.prodPriceRow}>
-                                            <div className={styles.prodPrice}>₹{prod.cardholderPrice}</div>
-                                            {/* Rating Placeholder */}
-                                            <div className={styles.rating}>
-                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="#fbbf24" stroke="#fbbf24" strokeWidth="2">
-                                                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-                                                </svg>
-                                                <span>4.8</span>
-                                            </div>
-                                        </div>
-
-                                        {/* 🔥 ADD TO CART */}
-                                        <button
-                                            className={styles.addToCartBtn}
-                                            onClick={() => {
-                                                if (isInCart(prod.id)) {
-                                                    removeFromCart(prod.id);
-                                                } else {
-                                                    addToCart({
-                                                        id: prod.id,
-                                                        name: prod.prodName,
-                                                        price: prod.cardholderPrice,
-                                                        mrpPrice: prod.mrpPrice,
-                                                        cardholderPrice: prod.cardholderPrice,
-                                                        pointsToBeRedeem: prod.pointsToBeRedeem,
-                                                        image: `/${prod.prodImagePath}`,
-                                                        quantity: 1
-                                                    });
-                                                }
-                                            }}
-                                            style={{
-                                                background: isInCart(prod.id) ? '#22c55e' : '',
-                                                transition: 'all 0.3s ease'
-                                            }}
-                                        >
-                                            {isInCart(prod.id) ? 'Added' : 'Add to Cart'}
-                                        </button>
-                                    </div>
-                                </div>
+                                <ProductCard key={prod.id} product={prod} />
                             ))
                         )}
                     </div>

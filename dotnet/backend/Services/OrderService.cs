@@ -40,43 +40,118 @@ namespace EMart.Services
 
             if (!cartItems.Any()) throw new Exception("Cart is empty. Cannot place order.");
 
-            decimal totalAmount = 0;
-            int totalPointsRequired = 0;
+            // ========================================
+            // VALIDATION 1: Loyalty Card Status Check
+            // ========================================
+            bool hasNonMrpItems = cartItems.Any(ci => ci.PriceType != "MRP");
+            Loyaltycard? loyaltyCard = null;
 
+            if (hasNonMrpItems)
+            {
+                loyaltyCard = await _loyaltycardService.GetLoyaltycardByUserIdAsync(userId);
+                if (loyaltyCard == null)
+                {
+                    throw new Exception("Loyalty card required for non-MRP pricing. Please use MRP pricing or obtain a loyalty card.");
+                }
+                if (loyaltyCard.IsActive != 'Y' && loyaltyCard.IsActive != 'y')
+                {
+                    throw new Exception("Your loyalty card is inactive. Please contact support or use MRP pricing.");
+                }
+            }
+
+            // ========================================
+            // VALIDATION 2: Product Eligibility Check
+            // ========================================
             foreach (var item in cartItems)
             {
-                decimal price = item.PriceSnapshot;
-                totalAmount += price * item.Quantity;
-
-                if (item.Product?.PointsToBeRedeem != null && item.Product.PointsToBeRedeem > 0)
+                if (item.PriceType == "LOYALTY")
                 {
-                    totalPointsRequired += item.Product.PointsToBeRedeem.Value * item.Quantity;
+                    if (item.Product?.CardholderPrice == null)
+                    {
+                        throw new Exception($"Product '{item.Product?.ProdName}' is not eligible for cardholder pricing.");
+                    }
+                }
+                else if (item.PriceType == "POINTS")
+                {
+                    if (item.Product?.PointsToBeRedeem == null || item.Product.PointsToBeRedeem <= 0)
+                    {
+                        throw new Exception($"Product '{item.Product?.ProdName}' cannot be purchased with points.");
+                    }
                 }
             }
 
-            decimal amountPaidByPoints = 0;
-
-            if ("LOYALTY".Equals(paymentMode, StringComparison.OrdinalIgnoreCase))
+            // ========================================
+            // VALIDATION 3: Verify Pricing Rules
+            // ========================================
+            foreach (var item in cartItems)
             {
-                var card = await _loyaltycardService.GetLoyaltycardByUserIdAsync(userId);
-                if (card == null) throw new Exception("Loyalty card not found");
-
-                if ((card.PointsBalance ?? 0) < totalPointsRequired)
+                decimal expectedPrice;
+                if (item.PriceType == "MRP")
                 {
-                    throw new Exception($"Insufficient loyalty points. Required: {totalPointsRequired}, Available: {card.PointsBalance ?? 0}");
+                    expectedPrice = item.Product?.MrpPrice ?? 0;
+                }
+                else if (item.PriceType == "LOYALTY")
+                {
+                    expectedPrice = item.Product?.CardholderPrice ?? 0;
+                }
+                else // POINTS
+                {
+                    expectedPrice = item.Product?.MrpPrice ?? 0;
                 }
 
-                amountPaidByPoints = (decimal)totalPointsRequired;
-                await _loyaltycardService.UpdatePointsAsync(userId, -totalPointsRequired);
+                // Allow small rounding differences
+                if (Math.Abs(item.PriceSnapshot - expectedPrice) > 0.01m)
+                {
+                    throw new Exception($"Price mismatch for '{item.Product?.ProdName}'. Expected: {expectedPrice}, Stored: {item.PriceSnapshot}. Please refresh cart.");
+                }
             }
+
+            // ========================================
+            // VALIDATION 4: Points Sufficiency Check
+            // ========================================
+            int totalPointsUsed = cartItems.Sum(ci => ci.PointsUsed);
+
+            if (totalPointsUsed > 0)
+            {
+                if (loyaltyCard == null)
+                {
+                    loyaltyCard = await _loyaltycardService.GetLoyaltycardByUserIdAsync(userId);
+                }
+
+                if (loyaltyCard == null || (loyaltyCard.PointsBalance ?? 0) < totalPointsUsed)
+                {
+                    throw new Exception($"Insufficient loyalty points. Required: {totalPointsUsed}, Available: {loyaltyCard?.PointsBalance ?? 0}");
+                }
+            }
+
+            // ========================================
+            // VALIDATION 5: Points-Only Checkout Prevention
+            // ========================================
+            // Calculate total cash amount (items NOT using POINTS pricing)
+            decimal totalCashAmount = cartItems
+                .Where(ci => ci.PriceType != "POINTS")
+                .Sum(ci => ci.PriceSnapshot * ci.Quantity);
+
+            if (totalCashAmount <= 0 && cartItems.Any(ci => ci.PriceType == "POINTS"))
+            {
+                throw new Exception("Points-only purchase is not allowed. At least one item must have a cash value. Please add a non-points item to your cart.");
+            }
+
+            // ========================================
+            // CALCULATE TOTALS
+            // ========================================
+            decimal totalAmount = cartItems.Sum(ci => ci.PriceSnapshot * ci.Quantity);
+
+            // For POINTS items, the price is technically "paid" via points
+            decimal amountPaidByPoints = cartItems
+                .Where(ci => ci.PriceType == "POINTS")
+                .Sum(ci => ci.PriceSnapshot * ci.Quantity);
 
             decimal amountPaidByCash = totalAmount - amountPaidByPoints;
 
-            if (amountPaidByCash <= 0)
-            {
-                throw new Exception("Points-only purchase is not allowed. Please pay some amount by cash.");
-            }
-
+            // ========================================
+            // CREATE ORDER
+            // ========================================
             var ordermaster = new Ordermaster
             {
                 UserId = userId,
@@ -103,11 +178,24 @@ namespace EMart.Services
             }
 
             _context.OrderItems.AddRange(ordermaster.Items);
+
+            // ========================================
+            // DEDUCT POINTS
+            // ========================================
+            if (totalPointsUsed > 0 && loyaltyCard != null)
+            {
+                await _loyaltycardService.UpdatePointsAsync(userId, -totalPointsUsed);
+            }
+
+            // Clear cart items
             _context.Cartitems.RemoveRange(cartItems);
 
+            // ========================================
+            // AWARD POINTS (10% of cash amount)
+            // ========================================
             try
             {
-                int pointsEarned = (int)(totalAmount * 0.10m);
+                int pointsEarned = (int)(amountPaidByCash * 0.10m);
                 if (pointsEarned > 0)
                 {
                     await _loyaltycardService.UpdatePointsAsync(userId, pointsEarned);
@@ -147,3 +235,4 @@ namespace EMart.Services
         }
     }
 }
+

@@ -34,5 +34,18 @@ namespace EMart.Models
         [Required]
         [Column("price_snapshot", TypeName = "decimal(10,2)")]
         public decimal PriceSnapshot { get; set; }
+
+        /// <summary>
+        /// The pricing type selected: MRP, LOYALTY, or POINTS
+        /// </summary>
+        [Column("price_type")]
+        [MaxLength(10)]
+        public string PriceType { get; set; } = "MRP";
+
+        /// <summary>
+        /// Number of loyalty points used for this item (0 if MRP or LOYALTY)
+        /// </summary>
+        [Column("points_used")]
+        public int PointsUsed { get; set; } = 0;
     }
 }

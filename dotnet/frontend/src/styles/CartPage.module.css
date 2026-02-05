@@ -257,6 +257,20 @@
     border-radius: 8px;
 }
 
+/* Price Type Badge */
+.priceTypeBadge {
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.375rem 0.75rem;
+    border-radius: 6px;
+    width: fit-content;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+
 /* Dual Pricing Row */
 .pricingRow {
     display: flex;

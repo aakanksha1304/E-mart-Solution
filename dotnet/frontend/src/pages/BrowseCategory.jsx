@@ -2,25 +2,16 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import styles from "../styles/HomePage.module.css";
-
-// 🔥 CART CONTEXT
-import { useCart } from "../context/CartContext";
+import ProductCard from "../components/ProductCard";
 
 const BrowseCategory = () => {
   const { catId } = useParams(); // Example: C001, MOB001 etc
   const navigate = useNavigate();
 
-  const { addToCart, removeFromCart, cartItems } = useCart();
-
   const [products, setProducts] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
   const [hasSubCategories, setHasSubCategories] = useState(false);
   const [loading, setLoading] = useState(true);
-
-  // ✅ Check if product already exists in cart
-  const isInCart = (productId) => {
-    return cartItems.some((item) => item.id === productId);
-  };
 
   // ✅ Helper to fix missing category images
   const getCategoryImage = (cat) => {
@@ -172,7 +163,6 @@ const BrowseCategory = () => {
             <h2 style={{ marginBottom: "25px" }}>Products</h2>
 
             <div className={styles.productGrid}>
-
               {products.length === 0 && (
                 <p style={{ fontSize: "18px" }}>
                   No products found in this category.
@@ -180,63 +170,10 @@ const BrowseCategory = () => {
               )}
 
               {products.map(prod => (
-                <div key={prod.id} className={styles.productCard}>
-
-                  <div
-                    className={styles.prodImageContainer}
-                    onClick={() => navigate(`/product/${prod.id}`)}
-                    style={{ cursor: 'pointer' }}
-                  >
-                    <img
-                      src={`/${prod.prodImagePath}`}
-                      alt={prod.prodName}
-                      className={styles.prodImage}
-                      onError={(e) => e.target.src = "/images/default.jpg"}
-                    />
-                  </div>
-
-                  <div className={styles.prodInfo}>
-                    <h3
-                      className={styles.prodName}
-                      onClick={() => navigate(`/product/${prod.id}`)}
-                      style={{ cursor: 'pointer' }}
-                    >{prod.prodName}</h3>
-
-                    <div className={styles.prodPrice}>
-                      ₹{prod.mrpPrice}
-                    </div>
-
-                    {/* 🔥 ADD TO CART */}
-                    <button
-                      className={styles.addToCartBtn}
-                      onClick={() => {
-                        if (isInCart(prod.id)) {
-                          removeFromCart(prod.id);
-                        } else {
-                          addToCart({
-                            id: prod.id,
-                            name: prod.prodName,
-                            price: prod.cardholderPrice,
-                            mrpPrice: prod.mrpPrice,
-                            cardholderPrice: prod.cardholderPrice,
-                            pointsToBeRedeem: prod.pointsToBeRedeem,
-                            image: `${prod.prodImagePath}`,
-                            quantity: 1
-                          });
-                        }
-                      }}
-                      style={{
-                        background: isInCart(prod.id) ? '#22c55e' : '',
-                        transition: 'all 0.3s ease'
-                      }}
-                    >
-                      {isInCart(prod.id) ? 'Added' : 'Add to Cart'}
-                    </button>
-                  </div>
-
-                </div>
+                <ProductCard key={prod.id} product={prod} />
               ))}
             </div>
+
           </>
         )}
 
@@ -289,75 +226,18 @@ const BrowseCategory = () => {
         <>
           <h2 style={{ marginBottom: "25px" }}>Products</h2>
 
-          <div className={styles.productGrid}>
-            {products.length === 0 ? (
-              <p style={{ fontSize: "18px" }}>
-                No products found in this subcategory.
-              </p>
-            ) : (
-              products.map((prod) => (
-                <div key={prod.id} className={styles.productCard}>
+            <div className={styles.productGrid}>
+              {products.length === 0 ? (
+                <p style={{ fontSize: "18px" }}>
+                  No products found in this subcategory.
+                </p>
+              ) : (
+                products.map((prod) => (
+                  <ProductCard key={prod.id} product={prod} />
+                ))
+              )}
+            </div>
 
-                  {/* ✅ Product Image */}
-                  <div
-                    className={styles.prodImageContainer}
-                    onClick={() => navigate(`/product/${prod.id}`)}
-                    style={{ cursor: 'pointer' }}
-                  >
-                    <img
-                      src={`${prod.prodImagePath}`}
-                      alt={prod.prodName}
-                      className={styles.prodImage}
-                      onError={(e) =>
-                        (e.target.src = "/images/default.jpg")
-                      }
-                    />
-                  </div>
-
-                  {/* ✅ Product Info */}
-                  <div className={styles.prodInfo}>
-                    <h3
-                      className={styles.prodName}
-                      onClick={() => navigate(`/product/${prod.id}`)}
-                      style={{ cursor: 'pointer' }}
-                    >
-                      {prod.prodName}
-                    </h3>
-
-                    <div className={styles.prodPrice}>
-                      ₹ {prod.mrpPrice}
-                    </div>
-
-                    {/* ✅ Add To Cart Button */}
-                    <button
-                      className={styles.addToCartBtn}
-                      onClick={() => {
-                        if (isInCart(prod.id)) {
-                          removeFromCart(prod.id);
-                        } else {
-                          addToCart({
-                            id: prod.id,
-                            name: prod.prodName,
-                            price: prod.cardholderPrice,
-                            image: `${prod.prodImagePath}`,
-                            quantity: 1,
-                          });
-                        }
-                      }}
-                      style={{
-                        background: isInCart(prod.id) ? '#22c55e' : '',
-                        transition: 'all 0.3s ease'
-                      }}
-                    >
-                      {isInCart(prod.id)
-                        ? "Added"
-                        : "Add to Cart"}
-                    </button>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
         </>
       )}
     </div>

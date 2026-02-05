@@ -8,7 +8,9 @@ export const CartProvider = ({ children }) => {
     const [cartItems, setCartItems] = useState([]);
     const [cartId, setCartId] = useState(null);
     const [loading, setLoading] = useState(false);
-const navigate=useNavigate();
+    const [totalPointsUsed, setTotalPointsUsed] = useState(0);
+    const navigate = useNavigate();
+
     // ===============================
     // AUTH HEADER
     // ===============================
@@ -25,6 +27,7 @@ const navigate=useNavigate();
         if (!token) {
             setCartItems([]);
             setCartId(null);
+            setTotalPointsUsed(0);
             return;
         }
 
@@ -52,20 +55,26 @@ const navigate=useNavigate();
                 }
             }
 
-            // Map backend DTO → frontend model
+            // Map backend DTO → frontend model (now includes priceType and pointsUsed)
             const mapped = res.data.map(item => ({
                 id: item.productId,
                 cartItemId: item.cartItemId,
                 name: item.productName,
-                price: item.cardholderPrice,
+                price: item.priceSnapshot,
                 mrpPrice: item.mrpPrice,
                 cardholderPrice: item.cardholderPrice,
                 pointsToBeRedeem: item.pointsToBeRedeem,
                 image: `${item.prodImagePath}`,
-                quantity: item.quantity
+                quantity: item.quantity,
+                priceType: item.priceType || 'MRP',
+                pointsUsed: item.pointsUsed || 0
             }));
 
             setCartItems(mapped);
+            
+            // Calculate total points used
+            const totalPoints = mapped.reduce((sum, item) => sum + item.pointsUsed, 0);
+            setTotalPointsUsed(totalPoints);
         } catch (err) {
             console.error("❌ Error refreshing cart:", err);
         } finally {
@@ -81,9 +90,9 @@ const navigate=useNavigate();
     }, []);
 
     // ===============================
-    // ADD TO CART
+    // ADD TO CART (with priceType and pointsUsed)
     // ===============================
-    const addToCart = async (product) => {
+    const addToCart = async (product, priceType = 'MRP', pointsUsed = 0) => {
         const token = localStorage.getItem("token");
         if (!token) {
             alert("Please login to add items to cart");
@@ -94,13 +103,20 @@ const navigate=useNavigate();
         try {
             await axios.post(
                 "http://localhost:8080/api/cartitem/add",
-                { productId: product.id, quantity: 1 },
+                { 
+                    productId: product.id, 
+                    quantity: 1,
+                    priceType: priceType,
+                    pointsUsed: pointsUsed
+                },
                 { headers: getAuthHeader() }
             );
             refreshCart();
         } catch (err) {
             console.error("❌ Error adding to cart:", err);
-            alert("Failed to add to cart");
+            // Show specific error message from backend
+            const errorMessage = err.response?.data?.message || "Failed to add to cart";
+            alert(errorMessage);
         }
     };
 
@@ -116,13 +132,17 @@ const navigate=useNavigate();
                 `http://localhost:8080/api/cartitem/update/${item.cartItemId}`,
                 {
                     productId: item.id,
-                    quantity: Math.max(1, item.quantity + delta)
+                    quantity: Math.max(1, item.quantity + delta),
+                    priceType: item.priceType,
+                    pointsUsed: item.pointsUsed
                 },
                 { headers: getAuthHeader() }
             );
             refreshCart();
         } catch (err) {
             console.error("❌ Error updating quantity:", err);
+            const errorMessage = err.response?.data?.message || "Failed to update quantity";
+            alert(errorMessage);
         }
     };
 
@@ -150,6 +170,7 @@ const navigate=useNavigate();
     const clearCart = () => {
         setCartItems([]);
         setCartId(null);
+        setTotalPointsUsed(0);
     };
 
     return (
@@ -158,6 +179,7 @@ const navigate=useNavigate();
                 cartItems,
                 cartId,
                 loading,
+                totalPointsUsed,
                 addToCart,
                 updateQuantity,
                 removeFromCart,
@@ -174,3 +196,4 @@ const navigate=useNavigate();
 // HOOK
 // ===============================
 export const useCart = () => useContext(CartContext);
+

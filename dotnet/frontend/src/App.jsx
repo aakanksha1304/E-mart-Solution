@@ -22,6 +22,7 @@ import SearchResults from "./pages/SearchResults";
 
 /* CONTEXT */
 import { CartProvider } from "./context/CartContext";
+import { LoyaltyProvider } from "./context/LoyaltyContext";
 
 /* 🔁 Navbar Wrapper */
 const NavigationWrapper = () => {
@@ -39,49 +40,52 @@ function App() {
   return (
     <BrowserRouter>
       <CartProvider>
-        {/* ✅ SCROLL RESET ON ROUTE CHANGE */}
-        <ScrollToTop />
+        <LoyaltyProvider>
+          {/* ✅ SCROLL RESET ON ROUTE CHANGE */}
+          <ScrollToTop />
 
-        <div className="App">
-          {/* NAVBAR */}
-          <NavigationWrapper />
+          <div className="App">
+            {/* NAVBAR */}
+            <NavigationWrapper />
 
-          {/* ROUTES */}
-          <Routes>
-            {/* AUTH */}
-            <Route path="/" element={<HomePage />} />
-            <Route path="/login" element={<Login />} />
+            {/* ROUTES */}
+            <Routes>
+              {/* AUTH */}
+              <Route path="/" element={<HomePage />} />
+              <Route path="/login" element={<Login />} />
 
-            {/* HOME */}
-            <Route path="/home" element={<HomePage />} />
+              {/* HOME */}
+              <Route path="/home" element={<HomePage />} />
 
-            {/* CATEGORY */}
-            <Route path="/browse/:catId" element={<BrowseCategory />} />
+              {/* CATEGORY */}
+              <Route path="/browse/:catId" element={<BrowseCategory />} />
 
-            {/* PRODUCT DETAILS */}
-            <Route path="/product/:id" element={<ProductDetails />} />
+              {/* PRODUCT DETAILS */}
+              <Route path="/product/:id" element={<ProductDetails />} />
 
-            {/* PROFILE */}
-            <Route path="/profile" element={<ProfilePage />} />
+              {/* PROFILE */}
+              <Route path="/profile" element={<ProfilePage />} />
 
-              <Route path="/search" element={<SearchResults />} />
+                <Route path="/search" element={<SearchResults />} />
 
-              {/* CART */}
-              <Route path="/cart" element={<CartPage />} />
+                {/* CART */}
+                <Route path="/cart" element={<CartPage />} />
 
-            {/* CHECKOUT */}
-            <Route path="/checkout/address" element={<CheckoutAddress />} />
+              {/* CHECKOUT */}
+              <Route path="/checkout/address" element={<CheckoutAddress />} />
 
-            {/* PAYMENT */}
-            <Route path="/payment" element={<Payment />} />
-          </Routes>
+              {/* PAYMENT */}
+              <Route path="/payment" element={<Payment />} />
+            </Routes>
 
-          {/* FOOTER */}
-          <Footer />
-        </div>
+            {/* FOOTER */}
+            <Footer />
+          </div>
+        </LoyaltyProvider>
       </CartProvider>
     </BrowserRouter>
   );
 }
+
 
 export default App;
