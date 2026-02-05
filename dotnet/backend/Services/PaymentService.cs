@@ -78,15 +78,9 @@ namespace EMart.Services
                         }
                     }
 
-                    // 2. AWARD POINTS (10% of cash amount)
-                    // Calculate cash amount: Total - Points Value
-                    // Assuming Points Value = 1 Point = ₹1 (based on generic logic)
-                    // Or simpler: We can recalculate from items where PriceType != "POINTS"
-                    // But OrderItem doesn't store PriceType.
-
-                    // Alternative: Total Amount - Points Used = Cash Amount
-                    decimal cashAmount = Math.Max(0, order.TotalAmount - totalPointsUsed);
-                    int pointsEarned = (int)(cashAmount * 0.10m);
+                    // 2. AWARD POINTS (10% of total product price, excluding delivery)
+                    // order.TotalAmount contains the sum of (Price * Quantity) of all items
+                    int pointsEarned = (int)(order.TotalAmount * 0.10m);
 
                     if (pointsEarned > 0)
                     {

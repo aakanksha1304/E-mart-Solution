@@ -198,6 +198,7 @@ namespace EMart.Services
                     Quantity = cartItem.Quantity,
                     Price = cartItem.PriceSnapshot,
                     PointsUsed = cartItem.PointsUsed, // Persist points usage
+                    PriceType = cartItem.PriceType     // Persist price mode
                 };
                 ordermaster.Items.Add(orderItem);
             }
