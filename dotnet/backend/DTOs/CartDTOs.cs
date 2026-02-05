@@ -1,6 +1,16 @@
 namespace EMart.DTOs
 {
-    public record CartItemRequest(int ProductId, int Quantity);
+    /// <summary>
+    /// Request DTO for adding/updating cart items.
+    /// PriceType: "MRP" | "LOYALTY" | "POINTS"
+    /// PointsUsed: Number of points to redeem (only when PriceType is POINTS)
+    /// </summary>
+    public record CartItemRequest(
+        int ProductId, 
+        int Quantity,
+        string PriceType = "MRP",
+        int PointsUsed = 0
+    );
 
     public record CartItemResponse(
         int CartItemId,
@@ -13,13 +23,17 @@ namespace EMart.DTOs
         decimal? MrpPrice,
         decimal? CardholderPrice,
         int? PointsToBeRedeem,
-        decimal TotalPrice
+        decimal TotalPrice,
+        string PriceType,
+        int PointsUsed
     );
 
     public record CartResponse(
         int CartId,
         char IsActive,
         List<CartItemResponse> Items,
-        decimal GrantTotal
+        decimal GrantTotal,
+        int TotalPointsUsed
     );
 }
+

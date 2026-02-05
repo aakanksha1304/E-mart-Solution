@@ -586,35 +586,60 @@ const CartPage = () => {
 
                                         {/* PRICING SECTION - Updated for Loyalty Card */}
                                         <div className={styles.priceSection}>
+                                            {/* Price Type Badge */}
+                                            {item.priceType && item.priceType !== 'MRP' && (
+                                                <div className={styles.priceTypeBadge}>
+                                                    {item.priceType === 'LOYALTY' && '💳 Cardholder Price'}
+                                                    {item.priceType === 'POINTS' && '⭐ Points Redemption'}
+                                                </div>
+                                            )}
+
                                             {hasLoyaltyCard ? (
                                                 <>
                                                     <div className={styles.pricingRow}>
                                                         <div className={styles.priceOriginal}>
                                                             <span className={styles.priceLabel}>MRP:</span>
-                                                            <span className={styles.strikethrough}>₹{mrpPrice.toFixed(2)}</span>
+                                                            <span className={item.priceType !== 'MRP' ? styles.strikethrough : styles.priceValue}>
+                                                                ₹{mrpPrice.toFixed(2)}
+                                                            </span>
                                                         </div>
-                                                        <div className={styles.priceCardholder}>
-                                                            <span className={styles.priceLabel}>Cardholder:</span>
-                                                            <span className={styles.highlightPrice}>₹{cardholderPrice.toFixed(2)}</span>
+                                                        {item.priceType === 'LOYALTY' && (
+                                                            <div className={styles.priceCardholder}>
+                                                                <span className={styles.priceLabel}>Cardholder:</span>
+                                                                <span className={styles.highlightPrice}>₹{cardholderPrice.toFixed(2)}</span>
+                                                            </div>
+                                                        )}
+                                                    </div>
+
+                                                    {/* Points Used */}
+                                                    {item.pointsUsed > 0 && (
+                                                        <div className={styles.pointsInfo}>
+                                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                                                <circle cx="12" cy="12" r="10"></circle>
+                                                                <path d="M12 6v6l4 2" stroke="white" strokeWidth="2" fill="none"></path>
+                                                            </svg>
+                                                            <span>Using {item.pointsUsed} points</span>
                                                         </div>
-                                                    </div>
-                                                    <div className={styles.savingsIndicator}>
-                                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                                                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                                                        </svg>
-                                                        <span>Save ₹{itemSavings.toFixed(2)}</span>
-                                                    </div>
-                                                    <div className={styles.pointsInfo}>
-                                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                                                            <circle cx="12" cy="12" r="10"></circle>
-                                                            <path d="M12 6v6l4 2" stroke="white" strokeWidth="2" fill="none"></path>
-                                                        </svg>
-                                                        <span>Redeem for {pointsToRedeem} points</span>
-                                                    </div>
+                                                    )}
+
+                                                    {itemSavings > 0 && (
+                                                        <div className={styles.savingsIndicator}>
+                                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                                                            </svg>
+                                                            <span>Save ₹{itemSavings.toFixed(2)}</span>
+                                                        </div>
+                                                    )}
+
                                                     <div className={styles.itemTotal}>
                                                         <span className={styles.totalLabel}>Item Total:</span>
-                                                        <span className={styles.totalValue}>₹{(cardholderPrice * item.quantity).toFixed(2)}</span>
+                                                        <span className={styles.totalValue}>
+                                                            {item.priceType === 'POINTS' 
+                                                                ? `${item.pointsUsed} pts`
+                                                                : `₹${(item.price * item.quantity).toFixed(2)}`
+                                                            }
+                                                        </span>
                                                     </div>
                                                 </>
                                             ) : (
@@ -630,6 +655,7 @@ const CartPage = () => {
                                                 </>
                                             )}
                                         </div>
+
                                     </div>
 
                                     {/* Quantity Controls */}
