@@ -7,6 +7,11 @@
   padding: 0;
 } */
 
+.App {
+  padding-top: 80px;
+  /* Global padding for fixed navbar */
+}
+
 .main-layout {
   padding-top: 5rem;
 }
