@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EMart.Services
 {
-    // Interface moved to Services/IOrderService.cs
+
 
     public class OrderService : IOrderService
     {
@@ -47,9 +47,7 @@ namespace EMart.Services
             if (!cartItems.Any())
                 throw new Exception("Cart is empty. Cannot place order.");
 
-            // ========================================
-            // VALIDATION 1: Loyalty Card Status Check
-            // ========================================
+        
             bool hasNonMrpItems = cartItems.Any(ci => ci.PriceType != "MRP");
             Loyaltycard? loyaltyCard = null;
 
@@ -70,9 +68,7 @@ namespace EMart.Services
                 }
             }
 
-            // ========================================
-            // VALIDATION 2: Product Eligibility Check
-            // ========================================
+          
             foreach (var item in cartItems)
             {
                 if (item.PriceType == "LOYALTY")
@@ -98,9 +94,7 @@ namespace EMart.Services
                 }
             }
 
-            // ========================================
-            // VALIDATION 3: Verify Pricing Rules
-            // ========================================
+         
             foreach (var item in cartItems)
             {
                 decimal expectedPrice;
@@ -112,12 +106,12 @@ namespace EMart.Services
                 {
                     expectedPrice = item.Product?.CardholderPrice ?? 0;
                 }
-                else // POINTS
+                else 
                 {
                     expectedPrice = item.Product?.MrpPrice ?? 0;
                 }
 
-                // Allow small rounding differences
+         
                 if (Math.Abs(item.PriceSnapshot - expectedPrice) > 0.01m)
                 {
                     throw new Exception(
@@ -126,9 +120,6 @@ namespace EMart.Services
                 }
             }
 
-            // ========================================
-            // VALIDATION 4: Points Sufficiency Check
-            // ========================================
             int totalPointsUsed = cartItems.Sum(ci => ci.PointsUsed);
 
             if (totalPointsUsed > 0)
@@ -146,21 +137,17 @@ namespace EMart.Services
                 }
             }
 
-            // ========================================
-            // CALCULATE TOTALS
-            // ========================================
+           
             decimal totalAmount = cartItems.Sum(ci => ci.PriceSnapshot * ci.Quantity);
 
-            // For POINTS items, the price is technically "paid" via points
+        
             decimal amountPaidByPoints = cartItems
                 .Where(ci => ci.PriceType == "POINTS")
                 .Sum(ci => ci.PriceSnapshot * ci.Quantity);
 
             decimal amountPaidByCash = totalAmount - amountPaidByPoints;
 
-            // ========================================
-            // CREATE ORDER
-            // ========================================
+        
             var ordermaster = new Ordermaster
             {
                 UserId = userId,
@@ -182,49 +169,15 @@ namespace EMart.Services
                     ProductId = cartItem.ProductId,
                     Quantity = cartItem.Quantity,
                     Price = cartItem.PriceSnapshot,
-                    PointsUsed = cartItem.PointsUsed, // Persist points usage
-                    PriceType = cartItem.PriceType     // Persist price mode
+                    PointsUsed = cartItem.PointsUsed, 
+                    PriceType = cartItem.PriceType    
                 };
                 ordermaster.Items.Add(orderItem);
             }
 
             _context.OrderItems.AddRange(ordermaster.Items);
 
-            // ========================================
-            // NOTE: Points Deduction and Cart Clearing moved to PaymentService
-            // to support payment failure scenarios (retain cart if failed).
-            // ========================================
-
-            /* MOVED TO PAYMENT SERVICE
-            // ========================================
-            // DEDUCT POINTS
-            // ========================================
-            if (totalPointsUsed > 0 && loyaltyCard != null)
-            {
-                await _loyaltycardService.UpdatePointsAsync(userId, -totalPointsUsed);
-            }
-
-            // Clear cart items
-            _context.Cartitems.RemoveRange(cartItems);
-
-            // ========================================
-            // AWARD POINTS (10% of cash amount)
-            // ========================================
-            try
-            {
-                int pointsEarned = (int)(amountPaidByCash * 0.10m);
-                if (pointsEarned > 0)
-                {
-                    await _loyaltycardService.UpdatePointsAsync(userId, pointsEarned);
-                }
-            }
-            catch (Exception ex)
-            {
-                // Do NOT rollback order for reward failure
-                var msg = ex.InnerException?.Message ?? ex.Message;
-                Console.WriteLine($"Loyalty points credit failed: {msg}");
-            }
-            */
+        
 
             await _context.SaveChangesAsync();
             return ordermaster;
