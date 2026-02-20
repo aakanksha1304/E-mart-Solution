@@ -16,19 +16,19 @@ public class Product {
     @Column(name = "prod_id")
     private Integer id;
 
-    // one product can be in many cart items
+
     @OneToMany(mappedBy = "prod")
     @JsonIgnore
     private List<Cartitem> cartItems;
 
-    // FK to catmaster.id
+   
     @Column(name = "cat_master_id", nullable = false)
     private Integer categoryId;
 
     @Column(name = "prod_name", nullable = false, length = 150)
     private String prodName;
 
-    // 🔥🔥🔥 THIS WAS MISSING — VERY IMPORTANT
+   
     @Column(name = "prod_image_path", length = 255)
     private String prodImagePath;
 
@@ -47,13 +47,12 @@ public class Product {
     @Column(name = "points_2b_redeem")
     private Integer pointsToBeRedeem;
 
-    // ---------- Constructors ----------
+   
 
     public Product() {
     }
 
-    // ---------- Getters & Setters ----------
-
+   
     public Integer getId() {
         return id;
     }
