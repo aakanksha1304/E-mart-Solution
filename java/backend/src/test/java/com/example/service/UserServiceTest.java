@@ -25,7 +25,7 @@ class UserServiceTest {
     @Test
     void testGetUserById() {
 
-        // Arrange (fake user)
+       
         User user = new User();
         user.setId(1);
         user.setFullName("Pratik");
@@ -35,10 +35,10 @@ class UserServiceTest {
         when(userRepository.findById(1))
                 .thenReturn(Optional.of(user));
 
-        // Act
+       
         User result = userService.getUserById(1);
 
-        // Assert
+      
         assertEquals("Pratik", result.getFullName());
     }
 }
