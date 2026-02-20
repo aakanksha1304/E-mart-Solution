@@ -11,17 +11,13 @@ export const CartProvider = ({ children }) => {
     const [totalPointsUsed, setTotalPointsUsed] = useState(0);
     const navigate = useNavigate();
 
-    // ===============================
-    // AUTH HEADER
-    // ===============================
+
     const getAuthHeader = () => {
         const token = localStorage.getItem("token");
         return token ? { Authorization: `Bearer ${token}` } : {};
     };
 
-    // ===============================
-    // REFRESH CART FROM BACKEND
-    // ===============================
+    
     const refreshCart = async () => {
         const token = localStorage.getItem("token");
         if (!token) {
@@ -39,11 +35,11 @@ export const CartProvider = ({ children }) => {
                 { headers: getAuthHeader() }
             );
 
-            // 🆔 Capture cartId if available
+           
             if (res.data && res.data.length > 0) {
                 setCartId(res.data[0].cartId);
             } else {
-                // Fallback for empty cart
+             
                 try {
                     const cartRes = await axios.get(
                         "http://localhost:8080/api/cart/my",
@@ -55,7 +51,6 @@ export const CartProvider = ({ children }) => {
                 }
             }
 
-            // Map backend DTO → frontend model (now includes priceType and pointsUsed)
             const mapped = res.data.map(item => ({
                 id: item.productId,
                 cartItemId: item.cartItemId,
@@ -72,7 +67,7 @@ export const CartProvider = ({ children }) => {
 
             setCartItems(mapped);
             
-            // Calculate total points used
+           
             const totalPoints = mapped.reduce((sum, item) => sum + item.pointsUsed, 0);
             setTotalPointsUsed(totalPoints);
         } catch (err) {
@@ -82,16 +77,12 @@ export const CartProvider = ({ children }) => {
         }
     };
 
-    // ===============================
-    // INIT LOAD
-    // ===============================
+
     useEffect(() => {
         refreshCart();
     }, []);
 
-    // ===============================
-    // ADD TO CART (with priceType and pointsUsed)
-    // ===============================
+
     const addToCart = async (product, priceType = 'MRP', pointsUsed = 0) => {
         const token = localStorage.getItem("token");
         if (!token) {
@@ -114,15 +105,13 @@ export const CartProvider = ({ children }) => {
             refreshCart();
         } catch (err) {
             console.error("❌ Error adding to cart:", err);
-            // Show specific error message from backend
+           
             const errorMessage = err.response?.data?.message || "Failed to add to cart";
             alert(errorMessage);
         }
     };
 
-    // ===============================
-    // UPDATE QUANTITY
-    // ===============================
+ 
     const updateQuantity = async (productId, delta) => {
         const item = cartItems.find(i => i.id === productId);
         if (!item || !item.cartItemId) return;
@@ -146,9 +135,6 @@ export const CartProvider = ({ children }) => {
         }
     };
 
-    // ===============================
-    // REMOVE ITEM
-    // ===============================
     const removeFromCart = async (productId) => {
         const item = cartItems.find(i => i.id === productId);
         if (!item || !item.cartItemId) return;
@@ -164,9 +150,7 @@ export const CartProvider = ({ children }) => {
         }
     };
 
-    // ===============================
-    // CLEAR CART (POST-CHECKOUT / LOGOUT)
-    // ===============================
+
     const clearCart = () => {
         setCartItems([]);
         setCartId(null);
@@ -192,8 +176,6 @@ export const CartProvider = ({ children }) => {
     );
 };
 
-// ===============================
-// HOOK
-// ===============================
+
 export const useCart = () => useContext(CartContext);
 
