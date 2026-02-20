@@ -24,7 +24,7 @@ namespace EMart.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // 1. Unique Constraints
+           
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Email)
                 .IsUnique();
@@ -37,7 +37,7 @@ namespace EMart.Data
                 .HasIndex(c => c.UserId)
                 .IsUnique();
 
-            // 2. Decimal Precision (10, 2)
+          
             foreach (var property in modelBuilder.Model.GetEntityTypes()
                 .SelectMany(t => t.GetProperties())
                 .Where(p => p.ClrType == typeof(decimal) || p.ClrType == typeof(decimal?)))
@@ -45,12 +45,12 @@ namespace EMart.Data
                 property.SetColumnType("decimal(10,2)");
             }
 
-            // 3. Composite Key or Unique Index for OrderItem (order_id, product_id)
+            
             modelBuilder.Entity<OrderItem>()
                 .HasIndex(oi => new { oi.OrderId, oi.ProductId })
                 .IsUnique();
 
-            // 4. Default Values
+       
             modelBuilder.Entity<User>()
                 .Property(u => u.Provider)
                 .HasDefaultValue("LOCAL");
@@ -67,27 +67,25 @@ namespace EMart.Data
                 .Property(p => p.PaymentStatus)
                 .HasDefaultValue("initiated");
 
-            // 5. Relationships Configuration (Fluent API)
-            
-            // User -> Cart (One-to-One)
+           
             modelBuilder.Entity<User>()
                 .HasOne(u => u.Cart)
                 .WithOne(c => c.User)
                 .HasForeignKey<Cart>(c => c.UserId);
 
-            // User -> LoyaltyCard (One-to-One)
+           
             modelBuilder.Entity<User>()
                 .HasOne(u => u.LoyaltyCard)
                 .WithOne(l => l.User)
                 .HasForeignKey<Loyaltycard>(l => l.UserId);
 
-            // Catmaster -> Product (One-to-Many)
+            
             modelBuilder.Entity<Catmaster>()
                 .HasMany(c => c.Products)
                 .WithOne(p => p.Category)
                 .HasForeignKey(p => p.CategoryId);
 
-            // Ordermaster -> OrderItem (One-to-Many)
+            
             modelBuilder.Entity<Ordermaster>()
                 .HasMany(o => o.Items)
                 .WithOne(oi => oi.Order)
