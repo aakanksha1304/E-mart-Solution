@@ -1,7 +1,7 @@
 import { createRoot } from "react-dom/client";
 import "./index.css";
 
-/* 🌍 i18n INITIALIZATION (MUST BE LOADED ONCE) */
+
 import "./i18n/i18n";
 
 import App from "./App.jsx";
