@@ -20,7 +20,7 @@ namespace EMart.Services
         }
 
 
-    // 1️⃣ Main Categories (SubcatId == null OR "0")
+
         public async Task<IEnumerable<CategoryDto>> GetMainCategoriesAsync()
         {
             return await _context.Catmasters
@@ -36,19 +36,19 @@ namespace EMart.Services
                 .ToListAsync();
         }
 
-        // 2️⃣ Browse Category (Subcategories OR Products)
+
         public async Task<CategoryBrowseResponse> BrowseByCategoryAsync(string catId)
         {
             var response = new CategoryBrowseResponse();
 
-            // 🔍 Find category by business CatId
+           
             var category = await _context.Catmasters
                 .FirstOrDefaultAsync(c => c.CatId == catId);
 
             if (category == null)
                 throw new Exception($"Category not found: {catId}");
 
-            // 🔥 Check if subcategories exist
+        
             var subCategories = await _context.Catmasters
                 .Where(c => c.SubcatId == catId)
                 .Select(c => new CategoryDto(
@@ -61,7 +61,7 @@ namespace EMart.Services
                 ))
                 .ToListAsync();
 
-            // Case 1️⃣ → Has subcategories
+           
             if (subCategories.Any())
             {
                 response.HasSubCategories = true;
@@ -70,7 +70,7 @@ namespace EMart.Services
                 return response;
             }
 
-            // Case 2️⃣ → Leaf category → fetch products
+        
             var products = await _context.Products
     .Where(p => p.CategoryId == category.Id)
     .Select(p => new ProductDto(
