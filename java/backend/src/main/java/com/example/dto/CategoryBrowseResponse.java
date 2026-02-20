@@ -10,7 +10,7 @@ public class CategoryBrowseResponse {
     private List<Catmaster> subCategories;
     private List<Product> products;
 
-    // --- getters & setters ---
+    
 
     public boolean isHasSubCategories() {
         return hasSubCategories;
