@@ -47,9 +47,7 @@ namespace EMart.Services
             return user.Cart;
         }
 
-        /// <summary>
-        /// Gets the user's active loyalty card if they have one
-        /// </summary>
+        
         private async Task<Loyaltycard?> GetActiveLoyaltyCard(int userId)
         {
             var card = await _loyaltycardService.GetLoyaltycardByUserIdAsync(userId);
@@ -60,9 +58,6 @@ namespace EMart.Services
             return null;
         }
 
-        /// <summary>
-        /// Gets total points used in the current cart
-        /// </summary>
         private async Task<int> GetUsedPointsInCart(int cartId)
         {
             return await _context.Cartitems
@@ -99,19 +94,19 @@ namespace EMart.Services
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
             if (user == null) throw new Exception("User not found");
 
-            // Validate price type and determine price
+           
             decimal priceToUse;
             int pointsToUse = 0;
             string priceType = request.PriceType?.ToUpper() ?? "MRP";
 
             if (priceType == "MRP")
             {
-                // MRP is always available
+               
                 priceToUse = product.MrpPrice ?? 0;
             }
             else if (priceType == "LOYALTY")
             {
-                // LOYALTY requires active loyalty card and cardholder price
+                
                 var loyaltyCard = await GetActiveLoyaltyCard(user.Id);
                 if (loyaltyCard == null)
                 {
@@ -123,12 +118,12 @@ namespace EMart.Services
                 }
                 priceToUse = product.CardholderPrice.Value;
                 
-                // If product also has points requirement, include those
+                
                 if (product.PointsToBeRedeem != null && product.PointsToBeRedeem > 0)
                 {
                     pointsToUse = product.PointsToBeRedeem.Value * request.Quantity;
                     
-                    // Validate sufficient points
+                    
                     int usedInCart = await GetUsedPointsInCart(cart.Id);
                     int availablePoints = (loyaltyCard.PointsBalance ?? 0) - usedInCart;
                     
@@ -140,7 +135,7 @@ namespace EMart.Services
             }
             else if (priceType == "POINTS")
             {
-                // POINTS requires active loyalty card and pointsToBeRedeem > 0
+                
                 var loyaltyCard = await GetActiveLoyaltyCard(user.Id);
                 if (loyaltyCard == null)
                 {
@@ -153,7 +148,7 @@ namespace EMart.Services
                 
                 pointsToUse = product.PointsToBeRedeem.Value * request.Quantity;
                 
-                // Validate sufficient points
+              
                 int usedInCart = await GetUsedPointsInCart(cart.Id);
                 int availablePoints = (loyaltyCard.PointsBalance ?? 0) - usedInCart;
                 
@@ -162,7 +157,7 @@ namespace EMart.Services
                     throw new Exception($"Insufficient loyalty points. Required: {pointsToUse}, Available: {availablePoints}. Please remove items from cart to continue.");
                 }
                 
-                // For POINTS type, the monetary price is MRP (but will be "paid" via points at checkout)
+               
                 priceToUse = product.MrpPrice ?? 0;
             }
             else
@@ -170,19 +165,19 @@ namespace EMart.Services
                 throw new Exception($"Invalid price type: {priceType}. Must be MRP, LOYALTY, or POINTS");
             }
 
-            // Check if item already exists in cart
+            
             var cartItem = await _context.Cartitems
                 .FirstOrDefaultAsync(ci => ci.CartId == cart.Id && ci.ProductId == request.ProductId);
 
             if (cartItem != null)
             {
-                // Update existing item - recalculate points if quantity changes
+                
                 int oldPointsUsed = cartItem.PointsUsed;
                 cartItem.Quantity += request.Quantity;
                 cartItem.PriceSnapshot = priceToUse;
                 cartItem.PriceType = priceType;
                 
-                // Recalculate points for new quantity
+                
                 if (priceType == "POINTS" || (priceType == "LOYALTY" && product.PointsToBeRedeem > 0))
                 {
                     cartItem.PointsUsed = (product.PointsToBeRedeem ?? 0) * cartItem.Quantity;
@@ -208,7 +203,7 @@ namespace EMart.Services
 
             await _context.SaveChangesAsync();
             
-            // Reload to get navigation properties for the response
+           
             await _context.Entry(cartItem).Reference(ci => ci.Product).LoadAsync();
             return MapToResponse(cartItem);
         }
@@ -240,7 +235,7 @@ namespace EMart.Services
 
             if (quantity <= 0) throw new Exception("Quantity must be greater than 0");
 
-            // If using points, validate the new quantity doesn't exceed available points
+            
             if (cartItem.PriceType == "POINTS" || 
                 (cartItem.PriceType == "LOYALTY" && cartItem.Product?.PointsToBeRedeem > 0))
             {
