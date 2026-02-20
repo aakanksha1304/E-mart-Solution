@@ -4,8 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EMart.Services
 {
-    // Interface moved to Services/ILoyaltycardService.cs
-
+    
     public class LoyaltycardService : ILoyaltycardService
     {
         private readonly EMartDbContext _context;
