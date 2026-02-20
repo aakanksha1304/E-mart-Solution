@@ -5,7 +5,7 @@ using System.Text.Json;
 namespace EMart.Controllers
 {
     [ApiController]
-    [Route("rzp")] // Matches Java @RequestMapping("/rzp")
+    [Route("rzp")] 
     public class RazorpayController : ControllerBase
     {
         private readonly IConfiguration _config;
