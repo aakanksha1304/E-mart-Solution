@@ -4,11 +4,11 @@ import "./App.css";
 
 import ScrollToTop from "./components/ScrollToTop";
 
-/* LAYOUT */
+
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 
-/* PAGES */
+
 import HomePage from "./pages/HomePage";
 import Login from "./pages/Login";
 import CartPage from "./pages/CartPage";
@@ -20,11 +20,11 @@ import ProductDetails from "./pages/ProductDetails";
 import SearchResults from "./pages/SearchResults";
 
 
-/* CONTEXT */
+
 import { CartProvider } from "./context/CartContext";
 import { LoyaltyProvider } from "./context/LoyaltyContext";
 
-/* 🔁 Navbar Wrapper */
+
 const NavigationWrapper = () => {
   const navigate = useNavigate();
 
