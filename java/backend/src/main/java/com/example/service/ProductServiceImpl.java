@@ -36,7 +36,7 @@ public class ProductServiceImpl implements ProductService {
         productRepository.deleteById(id);
     }
 
-    // 🔥 CORE METHOD USED IN CATEGORY BROWSING
+   
     @Override
     public List<Product> getProductsByCategory(Integer categoryId) {
         return productRepository.findByCategoryId(categoryId);
