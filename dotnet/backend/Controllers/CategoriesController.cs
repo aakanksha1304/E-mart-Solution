@@ -14,7 +14,7 @@ namespace EMart.Controllers
             _service = service;
         }
 
-        // GET: /api/catalog/categories
+       
         [HttpGet("categories")]
         public async Task<IActionResult> GetMainCategories()
         {
@@ -22,7 +22,7 @@ namespace EMart.Controllers
             return Ok(result);
         }
 
-        // GET: /api/catalog/categories/{catId}
+        
         [HttpGet("categories/{catId}")]
         public async Task<IActionResult> BrowseCategory(string catId)
         {
