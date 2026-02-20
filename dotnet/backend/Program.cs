@@ -10,16 +10,13 @@ using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Force port to 8080 to match Java backend expectations in frontend
+
 builder.WebHost.UseUrls("http://localhost:8080");
 
-// Standard claim mapping is preferred for ClaimTypes.Name integration
-// JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
-// Add services to the container.
 builder.Services.AddControllers();
 
-// Configure CORS for React App
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(
@@ -34,13 +31,13 @@ builder.Services.AddCors(options =>
     );
 });
 
-// Configure MySQL Connection
+
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<EMartDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
 );
 
-// Configure JWT Authentication
+
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 var key = Encoding.UTF8.GetBytes(
     builder.Configuration["JwtSettings:Key"] ?? "emart_super_secret_key_1234567890_antigravity"
@@ -67,7 +64,7 @@ builder
         };
     });
 
-// Dependency Injection
+
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IProductService, ProductService>();
@@ -81,7 +78,7 @@ builder.Services.AddScoped<IInvoicePdfService, InvoicePdfService>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
@@ -89,7 +86,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseGlobalExceptionHandler();
 
-// app.UseHttpsRedirection();
+
 
 app.UseCors("AllowReactApp");
 
@@ -98,9 +95,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-// ---------------------------------------------------------
-// AUTO-MIGRATION: Add missing columns if they don't exist
-// ---------------------------------------------------------
+
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -113,7 +108,7 @@ using (var scope = app.Services.CreateScope())
         string[] tables = { "orderitem", "cartitem" };
         foreach (var table in tables)
         {
-            // Add points_used if missing
+           
             using (var command = connection.CreateCommand())
             {
                 command.CommandText = $@"
@@ -132,7 +127,7 @@ using (var scope = app.Services.CreateScope())
                 }
             }
 
-            // Add price_type if missing
+
             using (var command = connection.CreateCommand())
             {
                 command.CommandText = $@"
