@@ -14,7 +14,7 @@ namespace EMart.DTOs
 
         public DateTime PaymentDate { get; set; }
 
-        // ✅ ADD THESE (used in service)
+      
         public int OrderId { get; set; }
 
         public int UserId { get; set; }
