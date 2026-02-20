@@ -25,7 +25,7 @@ namespace EMart.Controllers
                                      ?? User.FindFirst("sub")?.Value 
                                      ?? User.Identity?.Name;
 
-        // ===================== GET MY CARD =====================
+       
         [HttpGet("my")]
         public async Task<ActionResult<Loyaltycard>> GetMyCard()
         {
@@ -38,7 +38,7 @@ namespace EMart.Controllers
             return Ok(card);
         }
 
-        // ===================== SIGNUP (Create for logged-in user) =====================
+      
         [HttpPost("signup")]
         public async Task<ActionResult<Loyaltycard>> Signup()
         {
@@ -49,11 +49,11 @@ namespace EMart.Controllers
                 var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == UserEmail);
                 if (user == null) return NotFound(new { message = "User not found" });
 
-                // Check if user already has a card
+                
                 var existingCard = await _loyaltycardService.GetLoyaltycardByUserIdAsync(user.Id);
                 if (existingCard != null) return BadRequest(new { message = "You already have a loyalty card" });
 
-                // Create new card with server-generated values
+              
                 var newCard = new Loyaltycard
                 {
                     UserId = user.Id,
@@ -74,7 +74,7 @@ namespace EMart.Controllers
             }
         }
 
-        // ===================== CREATE =====================
+        
         [HttpPost]
         public async Task<ActionResult<Loyaltycard>> Create([FromBody] Loyaltycard loyaltycard)
         {
@@ -90,7 +90,7 @@ namespace EMart.Controllers
             }
         }
 
-        // ===================== READ BY ID =====================
+    
         [HttpGet("{id}")]
         public async Task<ActionResult<Loyaltycard>> GetById(int id)
         {
@@ -99,7 +99,7 @@ namespace EMart.Controllers
             return Ok(card);
         }
 
-        // ===================== READ BY USER ID =====================
+       
         [HttpGet("user/{userId}")]
         public async Task<ActionResult<Loyaltycard>> GetByUserId(int userId)
         {
@@ -108,14 +108,14 @@ namespace EMart.Controllers
             return Ok(card);
         }
 
-        // ===================== READ ALL =====================
+     
         [HttpGet]
         public async Task<ActionResult<List<Loyaltycard>>> GetAll()
         {
             return await _loyaltycardService.GetAllLoyaltycardsAsync();
         }
 
-        // ===================== UPDATE CARD DETAILS =====================
+       
         [HttpPut("{id}")]
         public async Task<ActionResult<Loyaltycard>> Update(int id, [FromBody] Loyaltycard loyaltycard)
         {
@@ -130,7 +130,7 @@ namespace EMart.Controllers
             }
         }
 
-        // ===================== DELETE =====================
+       
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
