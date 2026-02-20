@@ -1,15 +1,8 @@
-/* auth.css */
 
-/* body {
-  font-family: Arial, sans-serif;
-  background-color: #f4f4f4;
-  margin: 0;
-  padding: 0;
-} */
 
 .App {
   padding-top: 80px;
-  /* Global padding for fixed navbar */
+
 }
 
 .main-layout {
@@ -20,20 +13,20 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  /* margin: 100px auto; */
+ 
   min-height: calc(100vh - 120px);
-  /* full page minus navbar/footer */
+ 
   background-image: url('https://www.shutterstock.com/image-photo/network-security-system-personal-data-260nw-2117026061.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   margin-bottom: -45px;
-  /* padding: 60px 20px; */
+  
 }
 
 .auth-box {
   background-color: rgba(255, 255, 255, 0.95);
-  /* slightly transparent */
+ 
   border-radius: 8px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   padding: 30px;
@@ -111,10 +104,10 @@
   margin-top: 15px;
   text-align: center;
   color: #ff0000;
-  /* Red color for error messages */
+  
 }
 
 .auth-message.success {
   color: #28a745;
-  /* Green color for success messages */
+  
 }
