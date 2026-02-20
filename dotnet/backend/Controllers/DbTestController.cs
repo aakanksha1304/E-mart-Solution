@@ -48,7 +48,7 @@ namespace EMart.Controllers
                     .Select(p => new { p.Id, p.ProdName, p.CategoryId })
                     .ToListAsync();
 
-                // Raw SQL to inspect actual column names
+              
                 var cartItemColumns = new List<string>();
                 using (var command = _context.Database.GetDbConnection().CreateCommand())
                 {
