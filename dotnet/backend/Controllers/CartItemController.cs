@@ -8,7 +8,7 @@ namespace EMart.Controllers
 {
     [Authorize]
     [ApiController]
-    [Route("api/cartitem")] // Matches Java @RequestMapping("/api/cartitem")
+    [Route("api/cartitem")] 
     public class CartItemController : ControllerBase
     {
         private readonly ICartService _cartService;
@@ -51,7 +51,6 @@ namespace EMart.Controllers
             if (UserEmail == null) return Unauthorized();
             try
             {
-                // In Java, it takes a DTO and uses quantity from it
                 var item = await _cartService.UpdateQuantityAsync(UserEmail, id, request.Quantity);
                 return Ok(item);
             }
