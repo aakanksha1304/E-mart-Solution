@@ -38,25 +38,21 @@ public class InvoicePdfService {
             PdfWriter.getInstance(document, baos);
             document.open();
 
-            // ---------------- Fonts ----------------
+         
             Font pageTitleFont = new Font(Font.HELVETICA, 14, Font.BOLD);
             Font logoFont = new Font(Font.HELVETICA, 20, Font.BOLD);
             Font normalFont = new Font(Font.HELVETICA, 10);
             Font smallFont = new Font(Font.HELVETICA, 9);
             Font boldFont = new Font(Font.HELVETICA, 10, Font.BOLD);
 
-            // ==========================
-            // 1) PAGE TITLE
-            // ==========================
+           
             Paragraph invoiceTitle = new Paragraph("INVOICE PAGE", pageTitleFont);
             invoiceTitle.setAlignment(Element.ALIGN_LEFT);
             document.add(invoiceTitle);
 
             document.add(new Paragraph(" "));
 
-            // ==========================
-            // 2) HEADER (Logo + Banner Area)
-            // ==========================
+            
             PdfPTable header = new PdfPTable(2);
             header.setWidthPercentage(100);
             header.setWidths(new float[] { 25, 75 });
@@ -84,9 +80,7 @@ public class InvoicePdfService {
 
             document.add(new Paragraph(" "));
 
-            // ==========================
-            // 3) CATEGORY MENU (2 rows)
-            // ==========================
+           
             PdfPTable menu1 = new PdfPTable(6);
             menu1.setWidthPercentage(100);
 
@@ -129,9 +123,7 @@ public class InvoicePdfService {
 
             document.add(new Paragraph(" "));
 
-            // ==========================
-            // 4) CUSTOMER NAME + ADDRESS (SINGLE)
-            // ==========================
+
             User user = order.getUser();
 
             String customerName = "N/A";
@@ -160,9 +152,7 @@ public class InvoicePdfService {
 
             document.add(new Paragraph(" "));
 
-            // ==========================
-            // 5) ORDER INFO
-            // ==========================
+      
             String dateStr = "-";
             if (order.getOrderDate() != null) {
                 dateStr = order.getOrderDate()
@@ -178,9 +168,7 @@ public class InvoicePdfService {
 
             document.add(new Paragraph(" "));
 
-            // ==========================
-            // 6) ITEMS TABLE (BRD Style)
-            // ==========================
+        
             PdfPTable itemTable = new PdfPTable(6);
             itemTable.setWidthPercentage(100);
             itemTable.setWidths(new float[] { 10, 35, 8, 15, 15, 17 });
@@ -201,7 +189,7 @@ public class InvoicePdfService {
                 Product p = it.getProduct();
                 int qty = it.getQuantity();
 
-                // Safety check
+               
                 if (p == null) {
                     continue;
                 }
@@ -234,9 +222,7 @@ public class InvoicePdfService {
 
             document.add(new Paragraph(" "));
 
-            // ==========================
-            // 7) TOTAL SECTION (Right side)
-            // ==========================
+           
             PdfPTable totalTable = new PdfPTable(2);
             totalTable.setWidthPercentage(40);
             totalTable.setHorizontalAlignment(Element.ALIGN_RIGHT);
@@ -255,16 +241,14 @@ public class InvoicePdfService {
 
             document.add(new Paragraph(" "));
 
-            // ==========================
-            // 8) e-Point Account Section
-            // ==========================
+          
             document.add(new Paragraph("Your e-Point A/c:", boldFont));
 
             PdfPTable epointTable = new PdfPTable(2);
             epointTable.setWidthPercentage(40);
             epointTable.setWidths(new float[] { 60, 40 });
 
-            // Static values (you can connect to points table later)
+           
             epointTable.addCell(normalCell("OP Bal:"));
             epointTable.addCell(rightCell("0"));
 
@@ -290,9 +274,7 @@ public class InvoicePdfService {
         }
     }
 
-    // ==========================
-    // Helper methods
-    // ==========================
+
     private PdfPCell headerCell(String text) {
         Font font = new Font(Font.HELVETICA, 9, Font.BOLD, java.awt.Color.WHITE);
         PdfPCell cell = new PdfPCell(new Phrase(text, font));
@@ -320,7 +302,7 @@ public class InvoicePdfService {
         return cell;
     }
 
-    // Added by Hamzah - wrapper method for payment email invoice
+
     public byte[] generateInvoiceAsBytes(Ordermaster order, List<OrderItem> items) {
 
         if (order == null) {
