@@ -56,14 +56,14 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(errors);
     }
     
-    // ✅ Handle RuntimeException as BAD_REQUEST for business logic errors
+ 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<Map<String, String>> handleRuntimeException(RuntimeException ex) {
         Map<String, String> error = new HashMap<>();
         error.put("message", ex.getMessage());
         error.put("status", "400");
         
-        // Log for debugging
+     
         System.err.println("⚠️ RuntimeException: " + ex.getMessage());
         
         return ResponseEntity
