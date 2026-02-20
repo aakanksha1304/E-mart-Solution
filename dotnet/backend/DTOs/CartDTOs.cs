@@ -1,10 +1,6 @@
 namespace EMart.DTOs
 {
-    /// <summary>
-    /// Request DTO for adding/updating cart items.
-    /// PriceType: "MRP" | "LOYALTY" | "POINTS"
-    /// PointsUsed: Number of points to redeem (only when PriceType is POINTS)
-    /// </summary>
+    
     public record CartItemRequest(
         int ProductId, 
         int Quantity,
