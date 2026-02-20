@@ -20,7 +20,7 @@ public class LoyaltycardServiceImpl implements LoyaltycardService {
     @Autowired
     private UserRepository userRepository;
 
-    // ===================== CREATE =====================
+   
     @Override
     public Loyaltycard createLoyaltycard(Loyaltycard loyaltycard) {
 
@@ -39,7 +39,6 @@ public class LoyaltycardServiceImpl implements LoyaltycardService {
         return loyaltycardRepository.save(loyaltycard);
     }
 
-    // ===================== READ =====================
     @Override
     public Loyaltycard getLoyaltycardById(Integer id) {
         return loyaltycardRepository.findById(id).orElse(null);
@@ -55,7 +54,7 @@ public class LoyaltycardServiceImpl implements LoyaltycardService {
         return loyaltycardRepository.findAll();
     }
 
-    // ===================== UPDATE CARD DETAILS =====================
+   
     @Override
     public Loyaltycard updateLoyaltycard(Integer id, Loyaltycard loyaltycard) {
 
@@ -70,7 +69,7 @@ public class LoyaltycardServiceImpl implements LoyaltycardService {
         return loyaltycardRepository.save(existing);
     }
 
-    // ===================== UPDATE POINTS (INTERNAL ONLY) =====================
+  
     @Override
     @Transactional
     public void updatePoints(Integer userId, int pointsChange) {
@@ -101,7 +100,7 @@ public class LoyaltycardServiceImpl implements LoyaltycardService {
         loyaltycardRepository.save(card);
     }
 
-    // ===================== DELETE =====================
+
     @Override
     public void deleteLoyaltycard(Integer id) {
         loyaltycardRepository.deleteById(id);
