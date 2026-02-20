@@ -9,7 +9,7 @@ namespace EMart.Controllers
 {
     [Authorize]
     [ApiController]
-    [Route("api/cart")] // Matches Java @RequestMapping("/api/cart")
+    [Route("api/cart")] 
     public class CartController : ControllerBase
     {
         private readonly EMartDbContext _context;
@@ -23,7 +23,7 @@ namespace EMart.Controllers
                                      ?? User.FindFirst("sub")?.Value 
                                      ?? User.Identity?.Name;
 
-        // CREATE cart for logged-in user
+       
         [HttpPost("create")]
         public async Task<ActionResult<Cart>> CreateCart()
         {
@@ -49,7 +49,7 @@ namespace EMart.Controllers
             return Ok(cart);
         }
 
-        // GET logged-in user's cart
+      
         [HttpGet("my")]
         public async Task<ActionResult<Cart>> GetMyCart()
         {
@@ -65,7 +65,6 @@ namespace EMart.Controllers
             return Ok(cart);
         }
 
-        // UPDATE logged-in user's cart
         [HttpPut("update")]
         public async Task<ActionResult<Cart>> UpdateMyCart([FromBody] Cart updatedCart)
         {
@@ -83,7 +82,7 @@ namespace EMart.Controllers
             return Ok(cart);
         }
 
-        // DELETE logged-in user's cart
+       
         [HttpDelete("delete")]
         public async Task<ActionResult<string>> DeleteMyCart()
         {
