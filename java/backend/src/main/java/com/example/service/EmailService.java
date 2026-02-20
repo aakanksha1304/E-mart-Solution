@@ -21,7 +21,7 @@ public class EmailService {
     @Autowired
     private JavaMailSender mailSender;
 
-    // ✅ Login Success Mail
+   
     @Async
     public void sendLoginSuccessMail(User user) {
 
@@ -38,7 +38,7 @@ public class EmailService {
         mailSender.send(message);
     }
 
-    // ✅ Payment Success Mail + Invoice Attachment
+   
     @Async
     public void sendPaymentSuccessMail(Ordermaster order, byte[] invoicePdf) throws Exception {
 
