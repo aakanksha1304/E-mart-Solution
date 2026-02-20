@@ -26,7 +26,7 @@ class UserServiceImpl implements UserService {
         this.cartRepository = cartRepository;
     }
 
-    // ---------------- HELPER ----------------
+   
 
     private void validateUniqueFields(User user) {
 
@@ -45,13 +45,13 @@ class UserServiceImpl implements UserService {
         }
     }
 
-    // ---------------- BASIC CRUD ----------------
+  
 
     @Override
     public User saveUser(User user) {
         validateUniqueFields(user);
 
-        // 🔐 Encode password before storing (only if present)
+       
         if (user.getPasswordHash() != null) {
             user.setPasswordHash(
                     passwordEncoder.encode(user.getPasswordHash()));
@@ -84,7 +84,7 @@ class UserServiceImpl implements UserService {
         User existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Update allowed fields only
+        
         existingUser.setFullName(updatedUser.getFullName());
         existingUser.setEmail(updatedUser.getEmail());
         existingUser.setMobile(updatedUser.getMobile());
@@ -93,7 +93,7 @@ class UserServiceImpl implements UserService {
         return userRepository.save(existingUser);
     }
 
-    // ---------------- NORMAL REGISTER (LOCAL USER) ----------------
+   
 
     @Override
     public User register(User user) {
@@ -102,16 +102,16 @@ class UserServiceImpl implements UserService {
             throw new RuntimeException("Email already registered");
         }
 
-        // 🔥 VERY IMPORTANT — SET PROVIDER
+       
         user.setProvider("LOCAL");
 
-        // 🔐 HASH PASSWORD
+      
         user.setPasswordHash(
                 passwordEncoder.encode(user.getPasswordHash()));
 
         User savedUser = userRepository.save(user);
 
-        // ✅ PROACTIVE CART CREATION
+      
         Cart cart = new Cart();
         cart.setUser(savedUser);
         cart.setIsActive('Y');
@@ -120,7 +120,7 @@ class UserServiceImpl implements UserService {
         return savedUser;
     }
 
-    // ---------------- NORMAL LOGIN ----------------
+  
 
     @Override
     public User login(String email, String password) {
@@ -128,37 +128,36 @@ class UserServiceImpl implements UserService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // 🔴 If this is a GOOGLE user, block normal login
+       n
         if ("GOOGLE".equals(user.getProvider())) {
             throw new RuntimeException("Please login using Google");
         }
 
-        // 🔐 VERIFY PASSWORD
+      
         if (!passwordEncoder.matches(password, user.getPasswordHash())) {
             throw new RuntimeException("Invalid credentials");
         }
 
-        return user; // JWT will be generated in controller
+        return user; 
     }
 
-    // ---------------- GOOGLE LOGIN (SSO) ----------------
-
+    
     @Override
     public User loginWithGoogle(String email, String fullName) {
 
-        // Check if user already exists
+       
         return userRepository.findByEmail(email)
                 .orElseGet(() -> {
-                    // 🔥 First time Google user → create new account automatically
+                 
                     User newUser = new User();
                     newUser.setEmail(email);
                     newUser.setFullName(fullName);
                     newUser.setProvider("GOOGLE");
-                    newUser.setPasswordHash(null); // no password for Google users
+                    newUser.setPasswordHash(null); 
 
                     User saved = userRepository.save(newUser);
 
-                    // ✅ PROACTIVE CART CREATION
+                  
                     Cart cart = new Cart();
                     cart.setUser(saved);
                     cart.setIsActive('Y');
