@@ -18,7 +18,7 @@ function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  // Registration States
+  
   const [regName, setRegName] = useState("");
   const [regEmail, setRegEmail] = useState("");
   const [regMobile, setRegMobile] = useState("");
@@ -28,7 +28,7 @@ function Login() {
 
   const [errors, setErrors] = useState({});
 
-  // redirection logic if already logged in
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     const user = localStorage.getItem("user");
@@ -37,7 +37,7 @@ function Login() {
     }
   }, [navigate]);
 
-  // Update height when flip state changes
+  
   useEffect(() => {
     const updateHeight = () => {
       const currentRef = isFlipped ? backRef : frontRef;
@@ -55,7 +55,7 @@ function Login() {
     };
   }, [isFlipped]);
 
-  // ---------------- VALIDATION ----------------
+
   const validateForm = () => {
     let newErrors = {};
     let isValid = true;
@@ -99,7 +99,7 @@ function Login() {
     return isValid;
   };
 
-  // ---------------- NORMAL LOGIN ----------------
+ 
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
 
@@ -115,11 +115,11 @@ function Login() {
 
       alert("🎉 Login Successful!");
 
-      // 🔥 SAVE USER + TOKEN
+      
       localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("token", user.token);
 
-      // 🔄 REFRESH CART
+    
       await refreshCart();
 
       navigate("/home");
@@ -138,13 +138,13 @@ function Login() {
     }
   };
 
-  // ---------------- REGISTER ----------------
+
   const handleRegisterSubmit = async (e) => {
     e.preventDefault();
 
     if (!validateForm()) return;
 
-    // 🔥 VERY IMPORTANT — passwordHash NOT password
+ 
     const userData = {
       fullName: regName,
       email: regEmail,
@@ -162,10 +162,9 @@ function Login() {
       console.log("✅ Registered User:", response.data);
       alert("🎉 Registration successful!");
 
-      // flip back to login
       setIsFlipped(false);
 
-      // clear form
+    
       setRegName("");
       setRegEmail("");
       setRegMobile("");
@@ -254,11 +253,11 @@ function Login() {
 
                         alert("🎉 Google Login Successful!");
 
-                        // 🔥 SAVE USER + TOKEN
+                    
                         localStorage.setItem("user", JSON.stringify(response.data));
                         localStorage.setItem("token", response.data.token);
 
-                        // 🔄 REFRESH CART
+                        
                         await refreshCart();
 
                         navigate("/home");
