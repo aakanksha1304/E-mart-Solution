@@ -20,7 +20,7 @@ namespace EMart.Controllers
             _emailService = emailService;
         }
 
-        // ---------------- NORMAL REGISTER ----------------
+     
         [HttpPost("register")]
         public async Task<ActionResult<LoginResponseDTO>> Register([FromBody] User user)
         {
@@ -45,24 +45,24 @@ namespace EMart.Controllers
             }
         }
 
-        // ---------------- NORMAL LOGIN ----------------
+  
         [HttpPost("login")]
         public async Task<ActionResult<LoginResponseDTO>> Login([FromBody] LoginRequest request)
         {
             try
             {
-                // ✅ Authenticate User
+             
                 var user = await _userService.LoginAsync(request.Email, request.Password);
 
                 if (user == null) return Unauthorized(new { message = "Invalid credentials" });
 
-                // ✅ Send Login Email
+                
                 await _emailService.SendLoginSuccessMailAsync(user);
 
-                // ✅ Generate JWT Token
+             
                 var token = _jwtService.GenerateToken(user);
 
-                // ✅ Prepare Response
+                
                 var response = new LoginResponseDTO
                 {
                     UserId = user.Id,
@@ -81,24 +81,24 @@ namespace EMart.Controllers
             }
         }
 
-        // ---------------- GOOGLE LOGIN (SSO) ----------------
-        [HttpPost("google")]
+ 
+ [HttpPost("google")]
         public async Task<ActionResult<LoginResponseDTO>> GoogleLogin([FromBody] GoogleLoginRequest request)
         {
             try
             {
-                // Auto create user if first time
+               
                 var user = await _userService.LoginWithGoogleAsync(request.Email, request.FullName);
 
                 if (user == null) return BadRequest(new { message = "Google login failed" });
 
-                // ✅ Send Login Email
+                
                 await _emailService.SendLoginSuccessMailAsync(user);
 
-                // Generate JWT Token
+                
                 var token = _jwtService.GenerateToken(user);
 
-                // Response
+           
                 var response = new LoginResponseDTO
                 {
                     UserId = user.Id,
