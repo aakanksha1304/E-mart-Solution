@@ -5,7 +5,7 @@ import styles from "../styles/HomePage.module.css";
 import ProductCard from "../components/ProductCard";
 
 const BrowseCategory = () => {
-  const { catId } = useParams(); // Example: C001, MOB001 etc
+  const { catId } = useParams();
   const navigate = useNavigate();
 
   const [products, setProducts] = useState([]);
@@ -13,7 +13,7 @@ const BrowseCategory = () => {
   const [hasSubCategories, setHasSubCategories] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // ✅ Helper to fix missing category images
+ 
   const getCategoryImage = (cat) => {
     if (cat.catImagePath && cat.catImagePath.trim() !== "" && !cat.catImagePath.includes("placeholder")) {
       return cat.catImagePath;
@@ -21,7 +21,7 @@ const BrowseCategory = () => {
 
     const name = cat.catName.toLowerCase();
 
-    // Electronics & Gadgets
+   
     if (name.includes("smartphone")) return "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=1780&auto=format&fit=crop";
     if (name.includes("mobile")) return "/images/electronics/mobile.jpg";
     if (name.includes("laptop")) return "/images/electronics/laptop.jpg";
@@ -88,7 +88,7 @@ const BrowseCategory = () => {
     return "/images/default.jpg";
   };
 
-  // ✅ Load Category Data
+
   useEffect(() => {
     setLoading(true);
 
@@ -99,19 +99,19 @@ const BrowseCategory = () => {
 
         console.log("CATEGORY RESPONSE:", data);
 
-        // ✅ Check if category has subcategories
+      
         setHasSubCategories(data.hasSubCategories);
 
-        // ✅ If Parent Category → Show Only Subcategories
+  
         if (data.hasSubCategories) {
           setSubCategories(data.subCategories || []);
-          setProducts([]); // ❌ No products on main category page
+          setProducts([]); 
         }
 
-        // ✅ If Subcategory → Show Products
+      
         else {
           setProducts(data.products || []);
-          setSubCategories([]); // ❌ No subcategories here
+          setSubCategories([]); 
         }
 
         setLoading(false);
@@ -122,7 +122,7 @@ const BrowseCategory = () => {
       });
   }, [catId]);
 
-  // ✅ Loading Screen
+  
   if (loading) {
     return (
       <div style={{ padding: "40px" }}>
@@ -157,7 +157,7 @@ const BrowseCategory = () => {
           </>
         )}
 
-        {/* 🔹 PRODUCTS VIEW */}
+        {/*  PRODUCTS VIEW */}
         {!hasSubCategories && (
           <>
             <h2 style={{ marginBottom: "25px" }}>Products</h2>
@@ -184,7 +184,7 @@ const BrowseCategory = () => {
   return (
     <div style={{ padding: "40px" }}>
 
-      {/* ✅ MAIN CATEGORY VIEW → ONLY SUBCATEGORIES */}
+      {/*  MAIN CATEGORY VIEW → ONLY SUBCATEGORIES */}
       {hasSubCategories && (
         <>
           <h2 style={{ marginBottom: "25px" }}>Categories</h2>
@@ -221,7 +221,7 @@ const BrowseCategory = () => {
         </>
       )}
 
-      {/* ✅ SUBCATEGORY VIEW → ONLY PRODUCTS */}
+      {/* SUBCATEGORY VIEW → ONLY PRODUCTS */}
       {!hasSubCategories && (
         <>
           <h2 style={{ marginBottom: "25px" }}>Products</h2>
