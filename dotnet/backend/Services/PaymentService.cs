@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EMart.Services
 {
-    // IInvoicePdfService and InvoicePdfService moved to their own files/removed if duplicate.
+
 
     public interface IPaymentService
     {
@@ -78,13 +78,12 @@ namespace EMart.Services
                         }
                     }
 
-                    // 2. AWARD POINTS (10% of total product price, excluding delivery)
-                    // ONLY award points if user has an active loyalty card
+                  
                     var loyaltyCard = await _loyaltycardService.GetLoyaltycardByUserIdAsync(payment.UserId);
                     
                     if (loyaltyCard != null && (loyaltyCard.IsActive == 'Y' || loyaltyCard.IsActive == 'y'))
                     {
-                        // Calculate points ONLY on cash-paid items (exclude POINTS items)
+                        
                         decimal cashPaidAmount = order.Items
                             .Where(i => i.PriceType != "POINTS")
                             .Sum(i => i.Price * i.Quantity);
@@ -107,8 +106,7 @@ namespace EMart.Services
                         }
                     }
 
-                    // 3. CLEAR CART
-                    // Clear all items in the user's cart
+                  
                     var userCartItems = await _context
                         .Cartitems.Include(ci => ci.Cart)
                         .Where(ci => ci.Cart.UserId == payment.UserId)
@@ -120,7 +118,7 @@ namespace EMart.Services
                         await _context.SaveChangesAsync();
                     }
 
-                    // 4. GENERATE INVOICE & EMAIL
+                  
                     var items = order.Items.ToList();
                     var invoicePdf = _invoicePdfService.GenerateInvoicePdf(order, items);
 
@@ -135,7 +133,7 @@ namespace EMart.Services
                 }
             }
 
-            // Reload to get navigation properties for mapping
+          
             var saved = await _context
                 .Payments.Include(p => p.User)
                 .Include(p => p.Order)
