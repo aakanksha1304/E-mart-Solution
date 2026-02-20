@@ -32,19 +32,18 @@ public class User {
     @Column(name = "mobile", length = 15, unique = true)
     private String mobile;
 
-    // 🔴 IMPORTANT: password can be NULL for Google users
+   
     @Column(name = "password_hash", nullable = true)
     private String passwordHash;
 
     @Column(name = "address", length = 255)
     private String address;
 
-    // 🔴 NEW FIELD — tells how user registered
+   
     @Column(name = "provider", length = 20, nullable = false)
     private String provider; // LOCAL or GOOGLE
 
-    // -------- GETTERS & SETTERS --------
-
+  
     public Integer getId() {
         return id;
     }
