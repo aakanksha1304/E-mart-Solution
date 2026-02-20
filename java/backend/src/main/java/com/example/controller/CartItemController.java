@@ -44,44 +44,7 @@ public class CartItemController {
     @Autowired
     private CartService cartService;
 
-    // @PostMapping("/add")
-    // public CartItemResponseDTO addCartItem(@RequestBody CartItemRequestDTO dto) {
-    //
-    // if (dto.getQuantity() == null || dto.getQuantity() <= 0) {
-    // throw new IllegalArgumentException("Quantity must be greater than 0");
-    // }
-    //
-    // Cart cart = cartRepository.findById(dto.getCartId())
-    // .orElseThrow(() -> new IllegalArgumentException("Cart not found!!!"));
-    //
-    // Product product = productRepository.findById(dto.getProductId())
-    // .orElseThrow(() ->
-    // new ResponseStatusException(
-    // HttpStatus.NOT_FOUND,
-    // "Product not found!!"
-    // )
-    // );
-    //
-    // // 🔑 CHECK IF PRODUCT ALREADY EXISTS IN CART
-    // Cartitem cartItem = cartItemRepository
-    // .findByCartIdAndProdId(cart.getId(), product.getId())
-    // .orElse(null);
-    //
-    // if (cartItem != null) {
-    // // ✅ DUPLICATE PRODUCT → INCREASE QUANTITY
-    // cartItem.setQuantity(cartItem.getQuantity() + dto.getQuantity());
-    // } else {
-    // // ✅ NEW PRODUCT
-    // cartItem = new Cartitem();
-    // cartItem.setCart(cart);
-    // cartItem.setProd(product);
-    // cartItem.setQuantity(dto.getQuantity());
-    // cartItem.setPriceSnapshot(product.getMrpPrice());
-    // }
-    //
-    // Cartitem saved = cartItemRepository.save(cartItem);
-    // return mapToResponseDTO(saved);
-    // }
+   
 
     // new
     @PostMapping("/add")
@@ -94,7 +57,7 @@ public class CartItemController {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
-        // ✅ CRITICAL FIX: Delegate to CartService which has proper validation
+      
         // This ensures points validation, price type validation, etc.
         cartService.addToCart(
             user.getId(), 
