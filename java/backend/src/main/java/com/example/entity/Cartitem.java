@@ -17,7 +17,7 @@ public class Cartitem {
     @JoinColumn(name = "Cart_Id", nullable = false)
     private Cart cart;
 
-    // new addition to for many cartitem can have many products but each cartitem - one product.
+  
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "Prod_Id", nullable = false)
     private Product prod;
@@ -28,15 +28,11 @@ public class Cartitem {
     @Column(name = "PriceSnapshot", nullable = false, precision = 10, scale = 2)
     private BigDecimal priceSnapshot;
 
-    /**
-     * The pricing type selected: MRP, LOYALTY, or POINTS
-     */
+   
     @Column(name = "price_type", length = 10)
     private String priceType = "MRP";
 
-    /**
-     * Number of loyalty points used for this item (0 if MRP or LOYALTY)
-     */
+  
     @Column(name = "points_used")
     private Integer pointsUsed = 0;
 
