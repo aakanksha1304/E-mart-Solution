@@ -7,7 +7,7 @@ namespace EMart.Controllers
 {
     [Authorize]
     [ApiController]
-    [Route("payments")] // Matches Java @RequestMapping("/payments")
+    [Route("payments")] 
     public class PaymentController : ControllerBase
     {
         private readonly IPaymentService _paymentService;
