@@ -9,24 +9,24 @@ const ProductCard = ({ product }) => {
     const { addToCart, removeFromCart, cartItems } = useCart();
     const { isLoyaltyUser, pointsBalance } = useLoyalty();
 
-    // Calculate total points used in cart to determine available points
+   
     const totalPointsUsed = cartItems.reduce((sum, item) => sum + (item.pointsUsed || 0), 0);
     const availablePoints = pointsBalance - totalPointsUsed;
 
-    // Pricing selection state - checkbox for opt-in (default: unchecked = MRP)
+   
     const [useLoyaltyBenefit, setUseLoyaltyBenefit] = useState(false);
 
-    // Check if product is in cart
+  
     const isInCart = cartItems.some(item => item.id === product.id);
 
-    // Pricing data
+ 
     const mrp = Number(product.mrpPrice) || Number(product.price) || 0;
     const cardPrice = Number(product.cardholderPrice) || 0;
     const points = product.pointsToBeRedeem || 0;
     const hasCardholderPrice = product.cardholderPrice != null;
     const hasPoints = points > 0;
 
-    // Determine Pricing Case
+ 
     let pricingCase = 'MRP_ONLY';
     if (isLoyaltyUser) {
         if (hasCardholderPrice && hasPoints) pricingCase = 'CASE_1';
@@ -34,7 +34,7 @@ const ProductCard = ({ product }) => {
         else if (!hasCardholderPrice && hasPoints) pricingCase = 'CASE_3';
     }
 
-    // Reset checkbox when product changes
+
     useEffect(() => {
         setUseLoyaltyBenefit(false);
     }, [product.id]);
@@ -43,7 +43,7 @@ const ProductCard = ({ product }) => {
         e.stopPropagation();
         const isChecked = e.target.checked;
 
-        // If trying to check, validate points availability
+       
         if (isChecked && hasPoints) {
             if (points > availablePoints) {
                 alert(`Insufficient points! You need ${points} points, but only ${availablePoints} available.`);
@@ -62,27 +62,27 @@ const ProductCard = ({ product }) => {
             return;
         }
 
-        // Determine priceType and pointsToUse based on checkbox state
+      
         let priceType = 'MRP';
         let pointsToUse = 0;
 
         if (useLoyaltyBenefit) {
-            // Check points availability for points-based selections
+            
             if (hasPoints && points > availablePoints) {
                 alert(`Insufficient points! You need ${points} points, but only ${availablePoints} available.`);
                 return;
             }
 
             if (pricingCase === 'CASE_1') {
-                // Cardholder price + points
+             
                 priceType = 'LOYALTY';
                 pointsToUse = points;
             } else if (pricingCase === 'CASE_2') {
-                // Cardholder price only
+              
                 priceType = 'LOYALTY';
                 pointsToUse = 0;
             } else if (pricingCase === 'CASE_3') {
-                // Points only
+                
                 priceType = 'POINTS';
                 pointsToUse = points;
             }
