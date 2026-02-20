@@ -24,7 +24,7 @@ namespace EMart.Controllers
             ?? User.FindFirst("sub")?.Value
             ?? User.Identity?.Name;
 
-        // 🔹 SAVE ADDRESS DURING CHECKOUT
+    
         [HttpPost("add")]
         public async Task<ActionResult<Address>> AddAddress([FromBody] Address address)
         {
@@ -37,7 +37,7 @@ namespace EMart.Controllers
 
             address.UserId = user.Id;
 
-            // Check for duplicate address
+        
             var existingAddress = await _context.Addresses.FirstOrDefaultAsync(a =>
                 a.UserId == user.Id
                 && a.FullName == address.FullName
@@ -49,7 +49,7 @@ namespace EMart.Controllers
                 && a.Pincode == address.Pincode
             );
 
-            // If found, reuse it and update User's current address reference
+            
             if (existingAddress != null)
             {
                 user.Address =
@@ -58,7 +58,7 @@ namespace EMart.Controllers
                 return Ok(existingAddress);
             }
 
-            // Sync to User entity for Invoice service to pick up
+         
             user.Address =
                 $"{address.HouseNo}, {address.City}, {address.State} - {address.Pincode}";
 
@@ -68,7 +68,7 @@ namespace EMart.Controllers
             return Ok(address);
         }
 
-        // 🔹 GET USER ADDRESSES
+      
         [HttpGet("my")]
         public async Task<ActionResult<List<Address>>> GetMyAddresses()
         {
