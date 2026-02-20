@@ -12,19 +12,17 @@ const ProductDetails = () => {
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
     
-    // Loyalty card state
+ 
     const [loyaltyCard, setLoyaltyCard] = useState(null);
     const [isLoyaltyUser, setIsLoyaltyUser] = useState(false);
     
-    // Pricing selection state - checkbox for opt-in (default: unchecked = MRP)
+   
     const [useLoyaltyBenefit, setUseLoyaltyBenefit] = useState(false);
 
-    // Calculate if the product is currently in the cart
+  
     const isInCart = product && cartItems.some(item => item.id == product.id);
 
-    // ===============================
-    // FETCH PRODUCT
-    // ===============================
+  
     useEffect(() => {
         const fetchProduct = async () => {
             try {
@@ -42,9 +40,7 @@ const ProductDetails = () => {
         }
     }, [id]);
 
-    // ===============================
-    // FETCH LOYALTY CARD
-    // ===============================
+
     useEffect(() => {
         const fetchLoyaltyCard = async () => {
             try {
@@ -82,66 +78,62 @@ const ProductDetails = () => {
         fetchLoyaltyCard();
     }, []);
 
-    // ===============================
-    // DETERMINE PRICING CASE
-    // ===============================
+
     const hasCardholderPrice = product?.cardholderPrice != null;
     const hasPoints = (product?.pointsToBeRedeem || 0) > 0;
     const mrp = Number(product?.mrpPrice) || 0;
     const cardPrice = Number(product?.cardholderPrice) || 0;
     const points = product?.pointsToBeRedeem || 0;
 
-    // Calculate available points
+
     const pointsBalance = loyaltyCard?.pointsBalance || 0;
     const availablePoints = pointsBalance - totalPointsUsed;
 
-    // Determine which case applies
-    let pricingCase = 'MRP_ONLY'; // Default for non-loyalty users
+   
+    let pricingCase = 'MRP_ONLY'; 
 
     if (isLoyaltyUser) {
         if (hasCardholderPrice && hasPoints) {
-            pricingCase = 'CASE_1'; // cardholderPrice + points > 0 → checkbox opt-in
+            pricingCase = 'CASE_1'; 
         } else if (hasCardholderPrice && !hasPoints) {
-            pricingCase = 'CASE_2'; // cardholderPrice + points = 0 → checkbox opt-in
+            pricingCase = 'CASE_2'; 
         } else if (!hasCardholderPrice && hasPoints) {
-            pricingCase = 'CASE_3'; // no cardholderPrice + points > 0 → checkbox opt-in
+            pricingCase = 'CASE_3'; 
         } else {
-            pricingCase = 'MRP_ONLY'; // No special pricing available
+            pricingCase = 'MRP_ONLY';
         }
     }
 
-    // Reset checkbox when product changes
+    
     useEffect(() => {
         setUseLoyaltyBenefit(false);
     }, [product?.id]);
 
-    // ===============================
-    // HANDLE ADD TO CART
-    // ===============================
+    
     const handleAddToCart = () => {
         if (!product) return;
 
-        // Determine priceType and pointsToUse based on checkbox state
+      
         let priceType = 'MRP';
         let pointsToUse = 0;
 
         if (useLoyaltyBenefit) {
-            // Check points availability for points-based selections
+           
             if (hasPoints && points > availablePoints) {
                 alert("You have insufficient loyalty points. Please remove items from cart to continue.");
                 return;
             }
 
             if (pricingCase === 'CASE_1') {
-                // Cardholder price + points
+               
                 priceType = 'LOYALTY';
                 pointsToUse = points;
             } else if (pricingCase === 'CASE_2') {
-                // Cardholder price only
+                
                 priceType = 'LOYALTY';
                 pointsToUse = 0;
             } else if (pricingCase === 'CASE_3') {
-                // Points only
+               
                 priceType = 'POINTS';
                 pointsToUse = points;
             }
@@ -170,7 +162,7 @@ const ProductDetails = () => {
     const handleCheckboxChange = (e) => {
         const isChecked = e.target.checked;
 
-        // If trying to check, validate points availability
+        
         if (isChecked && hasPoints) {
             if (points > availablePoints) {
                 alert("You have insufficient loyalty points. Please remove items from cart to continue.");
@@ -181,9 +173,7 @@ const ProductDetails = () => {
         setUseLoyaltyBenefit(isChecked);
     };
 
-    // ===============================
-    // RENDER
-    // ===============================
+
     if (loading) {
         return <div className={styles.loading}>Loading...</div>;
     }
