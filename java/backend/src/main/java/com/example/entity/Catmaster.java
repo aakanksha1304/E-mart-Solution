@@ -14,8 +14,7 @@ public class Catmaster {
     @Column(name = "cat_id", nullable = false, length = 10)
     private String catId;
 
-    // @Column(name = "SubCat_Id", length = 10)
-    // private String subcatId;
+    
 
     @Column(name = "sub_cat_id")
     private String subcatId;
