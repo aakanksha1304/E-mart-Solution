@@ -8,7 +8,7 @@ namespace EMart.Controllers
 {
     [Authorize]
     [ApiController]
-    [Route("invoice")] // Matches Java @RequestMapping("/invoice")
+    [Route("invoice")] 
     public class InvoiceController : ControllerBase
     {
         private readonly EMartDbContext _context;
@@ -20,7 +20,7 @@ namespace EMart.Controllers
             _invoicePdfService = invoicePdfService;
         }
 
-        [HttpGet("pdf/{orderId}")] // Matches Java /pdf/{orderId}
+        [HttpGet("pdf/{orderId}")] 
         public async Task<IActionResult> DownloadInvoice(int orderId)
         {
             var order = await _context.Ordermasters
