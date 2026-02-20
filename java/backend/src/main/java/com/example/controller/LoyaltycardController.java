@@ -25,7 +25,7 @@ public class LoyaltycardController {
     @Autowired
     private com.example.repository.UserRepository userRepository;
 
-    // ===================== GET MY CARD =====================
+    
     @GetMapping("/my")
     public Loyaltycard getMyCard(org.springframework.security.core.Authentication authentication) {
         String email = authentication.getName();
@@ -34,20 +34,20 @@ public class LoyaltycardController {
                 .orElse(null); // Return null if user or card not found
     }
 
-    // ===================== SIGNUP FOR LOYALTY CARD =====================
+    
     @PostMapping("/signup")
     public Loyaltycard signup(org.springframework.security.core.Authentication authentication) {
         String email = authentication.getName();
         com.example.entity.User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Check if user already has a loyalty card
+        
         Loyaltycard existing = loyaltycardService.getLoyaltycardByUserId(user.getId());
         if (existing != null) {
             throw new RuntimeException("User already has a loyalty card");
         }
 
-        // Create new loyalty card with 100 bonus points
+       
         Loyaltycard newCard = new Loyaltycard();
         newCard.setUser(user);
         newCard.setCardNumber(generateCardNumber());
@@ -59,36 +59,36 @@ public class LoyaltycardController {
         return loyaltycardService.createLoyaltycard(newCard);
     }
 
-    // Helper method to generate card number
+    
     private String generateCardNumber() {
         return "LC" + System.currentTimeMillis();
     }
 
-    // ===================== CREATE =====================
+ 
     @PostMapping
     public Loyaltycard create(@RequestBody Loyaltycard loyaltycard) {
         return loyaltycardService.createLoyaltycard(loyaltycard);
     }
 
-    // ===================== READ BY ID =====================
+    
     @GetMapping("/{id}")
     public Loyaltycard getById(@PathVariable Integer id) {
         return loyaltycardService.getLoyaltycardById(id);
     }
 
-    // ===================== READ BY USER ID =====================
+  
     @GetMapping("/user/{userId}")
     public Loyaltycard getByUserId(@PathVariable Integer userId) {
         return loyaltycardService.getLoyaltycardByUserId(userId);
     }
 
-    // ===================== READ ALL =====================
+    
     @GetMapping
     public List<Loyaltycard> getAll() {
         return loyaltycardService.getAllLoyaltycards();
     }
 
-    // ===================== UPDATE CARD DETAILS =====================
+
     @PutMapping("/{id}")
     public Loyaltycard update(
             @PathVariable Integer id,
@@ -96,7 +96,7 @@ public class LoyaltycardController {
         return loyaltycardService.updateLoyaltycard(id, loyaltycard);
     }
 
-    // ===================== DELETE =====================
+    
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Integer id) {
         loyaltycardService.deleteLoyaltycard(id);
